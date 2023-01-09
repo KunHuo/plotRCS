@@ -5,7 +5,7 @@ plot_RCS <- function(data,
                      covariates = NULL,
                      positive = NULL,
                      group = NULL,
-                     knots = c(0.10,  0.50,   0.90),
+                     knots = 3,
                      ref.knot = 1,
                      ref.value = NULL,
                      show.pvalue = TRUE,
@@ -14,7 +14,7 @@ plot_RCS <- function(data,
                      fontsize = 12,
                      fontfamily = "serif",
                      linesize = 0.25,
-                     linecolor = "red", ...){
+                     linecolor = "#0072B5FF", ...){
 
   # Select variables and check
   outcome    <- select_variable(data, outcome)
@@ -45,8 +45,9 @@ plot_RCS <- function(data,
   assign("ddist_", rms::datadist(data), envir = envir)
   options(datadist = "ddist_")
 
-  # Set references
-  assign("m_", stats::quantile(data[[exposure]], knots), envir = envir)
+  # Set reference
+  k <- knots(knots)
+  assign("m_", stats::quantile(data[[exposure]], k), envir = envir)
   if(is.null(ref.value)){
     ddist_$limits["Adjust to", exposure] <<- m_[ref.knot]
   }else{
@@ -72,7 +73,7 @@ plot_RCS <- function(data,
 
   # Get plotdata from models
   if(is.null(group)){
-    eval.text <- sprintf("rms::Predict(model, %s,  ref.zero = TRUE, fun = exp)", exposure)
+    eval.text <- sprintf("rms::Predict(model, %s, ref.zero = TRUE, fun = exp)", exposure)
   }else{
     eval.text <- sprintf("rms::Predict(model, %s, %s, ref.zero = TRUE, fun = exp)", exposure, group)
   }
@@ -87,38 +88,32 @@ plot_RCS <- function(data,
     rm("m_", inherits = TRUE, envir = envir)
   }
 
+  # Set breaks for x-axis or y-axis
   xbreaks <- pretty(plotdata[[exposure]])
   ybreaks <- pretty(c(0, plotdata$upper))
-  xlabels <- attr(data[[exposure]], "label")
 
+  # Set labels for x-axis or y-axis
+  xlabels <- attr(data[[exposure]], "label")
   if (is.null(xlabels)) {
     xlabels <- exposure
   }
-
   if (is.null(time)) {
     ylab <- "Odds ratio"
   } else{
     ylab <- "Hazard ratio"
   }
 
+  # Plot by ggplot2
   if (is.null(group)) {
     plot <- ggplot2::ggplot(plotdata) +
       ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "yhat"), color = linecolor, size = linesize) +
-      ggplot2::geom_ribbon(ggplot2::aes_string(exposure, ymin = "lower", ymax = "upper"), alpha = 0.1, fill = linecolor
-      )
+      ggplot2::geom_ribbon(ggplot2::aes_string(exposure, ymin = "lower", ymax = "upper"), alpha = 0.1, fill = linecolor)
   } else{
     plot <- ggplot2::ggplot(plotdata) +
       ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "yhat", color = group),
                          size = linesize) +
-      ggplot2::geom_ribbon(ggplot2::aes_string(
-        exposure,
-        ymin = "lower",
-        ymax = "upper",
-        fill = group
-      ),
-      alpha = 0.1)
+      ggplot2::geom_ribbon(ggplot2::aes_string(exposure, ymin = "lower", ymax = "upper", fill = group), alpha = 0.1)
   }
-
   plot <- plot +
     ggplot2::geom_hline(yintercept = 1, linetype = 2, size = linesize) +
     gg_theme_sci(font.size = fontsize, font.family = fontfamily) +
@@ -128,9 +123,10 @@ plot_RCS <- function(data,
     ggplot2::scale_x_continuous(breaks = xbreaks, limits = c(min(xbreaks), max(xbreaks))) +
     ggplot2::scale_y_continuous(breaks = ybreaks, limits = c(min(ybreaks), max(ybreaks)))
 
+  # Show P value
   if (show.pvalue) {
-    pdata <- stats::anova(model)
-    pdata <- as.data.frame(pdata)
+    pdata  <- stats::anova(model)
+    pdata  <- as.data.frame(pdata)
     pvalue <- pdata[2, 3]
     p.overall <- pdata[1, 3]
 
@@ -144,16 +140,15 @@ plot_RCS <- function(data,
 
     p.overall <- format_pvalue(p.overall, digits = pvalue.digits)
     if (!regex_detect(p.overall, "<", fixed = TRUE)) {
-      p.overall <- paste0("P for overall association = ", p.overall)
+      p.overall <- paste0("P for association = ", p.overall)
     } else{
       p.overall <-
         regex_replace(p.overall, "<", replacement = "", fixed = TRUE)
       p.overall <-
-        paste0("P for overall association < ", p.overall)
+        paste0("P for association < ", p.overall)
     }
 
     p.string <- paste(p.overall, pvalue, sep = "\n")
-
 
     if (is.null(pvalue.position)) {
       px <- min(xbreaks) + max(xbreaks) / 30
@@ -162,7 +157,7 @@ plot_RCS <- function(data,
       px <- pvalue.position[1]
       py <- pvalue.position[2]
     }
-    plot # + gp_drawlabel(p.string, font.size = font.size, font.family = font.family, x = px, y = py)
+    plot # + gp_drawlabel(p.string, font.size = fontsize, font.family = fontfamily, x = px, y = py)
 
   } else{
     plot
