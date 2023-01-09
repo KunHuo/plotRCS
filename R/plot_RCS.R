@@ -1,4 +1,4 @@
-plot_RCS <- function(data,
+rcsplot <- function(data,
                      outcome = NULL,
                      time = NULL,
                      exposure = NULL,
