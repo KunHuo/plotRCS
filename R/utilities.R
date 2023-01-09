@@ -90,3 +90,35 @@ regex_split <- function(string,
     fixed = fixed,
     useBytes = useBytes)
 }
+
+regex_detect <- function(string,
+                         pattern,
+                         ignore.case = FALSE,
+                         perl = FALSE,
+                         fixed = FALSE,
+                         useBytes = FALSE){
+  grepl(
+    pattern,
+    string,
+    ignore.case = ignore.case,
+    perl = perl,
+    fixed = fixed,
+    useBytes = useBytes)
+}
+
+format_pvalue <- function(x, digits) {
+  fmt  <- paste0("%.", digits, "f")
+
+  pVec <- sapply(x, function(i){
+    if(is.na(i)){
+      NA
+    }else{
+      ifelse(i == -1, "NA", sprintf(fmt = fmt, i))
+    }
+  })
+  smallPString <- paste0("<0.", paste0(rep("0", digits - 1), collapse = ""), "1")
+  posAllZeros <- grepl("^0\\.0*$", pVec)
+
+  pVec[posAllZeros]  <- smallPString
+  return(pVec)
+}
