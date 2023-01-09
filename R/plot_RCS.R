@@ -11,7 +11,7 @@ rcsplot <- function(data,
                     ci.type = c("shape", "line"),
                     show.pvalue = TRUE,
                     pvalue.digits = 3,
-                    pvalue.position = NULL,
+                    pvalue.position = c(0.02, 0.98),
                     fontsize = 12,
                     fontfamily = "serif",
                     linesize = 0.25,
@@ -133,28 +133,44 @@ rcsplot <- function(data,
   # Plot by ggplot2
   if (is.null(group)) {
     plot <- ggplot2::ggplot(plotdata) +
-      ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "yhat"), color = linecolor, size = linesize)
+      ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "yhat"),
+                         color = linecolor,
+                         size = linesize)
     if(show.ci){
       if(ci.type == "shape"){
         plot <- plot +
-          ggplot2::geom_ribbon(ggplot2::aes_string(exposure, ymin = "lower", ymax = "upper"), alpha = alpha, fill = linecolor)
+          ggplot2::geom_ribbon(ggplot2::aes_string(exposure, ymin = "lower", ymax = "upper"),
+                               alpha = alpha,
+                               fill = linecolor)
       }else{
         plot <- plot +
-          ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "lower"), color = linecolor, size = linesize, linetype = 2) +
-          ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "upper"), color = linecolor, size = linesize, linetype = 2)
+          ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "lower"),
+                             color = linecolor,
+                             size = linesize,
+                             linetype = 2) +
+          ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "upper"),
+                             color = linecolor,
+                             size = linesize,
+                             linetype = 2)
       }
     }
   } else{
     plot <- ggplot2::ggplot(plotdata) +
-      ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "yhat", color = group), size = linesize)
+      ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "yhat", color = group),
+                         size = linesize)
     if(show.ci){
       if(ci.type == "shape"){
         plot <- plot +
-          ggplot2::geom_ribbon(ggplot2::aes_string(exposure, ymin = "lower", ymax = "upper", fill = group), alpha = alpha)
+          ggplot2::geom_ribbon(ggplot2::aes_string(exposure, ymin = "lower", ymax = "upper", fill = group),
+                               alpha = alpha)
       }else{
         plot <- plot +
-          ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "lower", color = group), size = linesize, linetype = 2) +
-          ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "upper", color = group), size = linesize, linetype = 2)
+          ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "lower", color = group),
+                             size = linesize,
+                             linetype = 2) +
+          ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "upper", color = group),
+                             size = linesize,
+                             linetype = 2)
       }
     }
   }
@@ -194,23 +210,16 @@ rcsplot <- function(data,
 
     p.string <- paste(p.overall, pvalue, sep = "\n")
 
-    if (is.null(pvalue.position)) {
-      px <- min(xbreaks) + max(xbreaks) / 30
-      py <- max(ybreaks) - max(ybreaks) / 8
-    } else{
-      px <- pvalue.position[1]
-      py <- pvalue.position[2]
-    }
-
-    # px <- pvalue.position[1] * max(xbreaks)
-    # py <- pvalue.position[2] * max(ybreaks)
+    px <-  min(xbreaks) + (max(xbreaks) - min(xbreaks)) * pvalue.position[1]
+    py <-  min(ybreaks) + (max(ybreaks) - min(ybreaks)) * pvalue.position[2]
 
     plot + draw_label(p.string,
                       size = fontsize,
                       fontfamily = fontfamily,
                       x = px,
-                      y = py)
-
+                      y = py,
+                      hjust = 0,
+                      vjust = 1)
   } else{
     plot
   }
