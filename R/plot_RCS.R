@@ -4,6 +4,7 @@ plot_RCS <- function(data,
                      exposure = NULL,
                      covariates = NULL,
                      positive = NULL,
+                     group = NULL,
                      knots = knots(),
                      ref.knot = 1,
                      ref.value = NULL,
@@ -20,6 +21,10 @@ plot_RCS <- function(data,
   covariates <- select_variable(data, covariates)
   if(!is.null(time)){
     time <- select_variable(data, time)
+  }
+
+  if(is.null(group)){
+    group <- select_variable(data, group)
   }
 
   if(is.null(positive)){
