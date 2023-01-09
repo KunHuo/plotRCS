@@ -1,5 +1,7 @@
 #' Location of knots for RCS
 #'
+#' @param n number of knots.
+#'
 #' @return a numeric vector.
 #' @export
 knots <- function(n = 3){

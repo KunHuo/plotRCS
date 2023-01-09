@@ -6,6 +6,9 @@
 \usage{
 knots(n = 3)
 }
+\arguments{
+\item{n}{number of knots.}
+}
 \value{
 a numeric vector.
 }
