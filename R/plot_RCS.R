@@ -7,8 +7,9 @@ rcsplot <- function(data,
                     group = NULL,
                     knots = c(0.05, 0.35, 0.65, 0.95),
                     ref.value = "k1",
-                    show.ci = TRUE,
-                    ci.type = c("shape", "line"),
+                    conf.int = TRUE,
+                    conf.level = 0.95,
+                    conf.type = c("shape", "line"),
                     show.pvalue = TRUE,
                     pvalue.digits = 3,
                     pvalue.position = c(0.02, 0.98),
@@ -69,7 +70,7 @@ rcsplot <- function(data,
       }
     }
   }
-  ddist_$limits["Adjust to", exposure] <<- ref.value
+  eval(parse(text = "ddist_$limits['Adjust to', exposure] <<- ref.value"))
 
   # Fit models
   if(is.null(time)){
@@ -110,7 +111,7 @@ rcsplot <- function(data,
     xbreaks <- pretty(plotdata[[exposure]])
   }
   if(is.null(ybreaks)){
-    if(show.ci){
+    if(conf.int){
       ybreaks <- pretty(c(0, plotdata$upper))
     }else{
       ybreaks <- pretty(c(0, plotdata$yhat))
@@ -128,7 +129,7 @@ rcsplot <- function(data,
     ylab <- "Hazard ratio"
   }
 
-  ci.type <- match.arg(ci.type)
+  conf.type <- match.arg(conf.type)
 
   # Plot by ggplot2
   if (is.null(group)) {
@@ -136,8 +137,8 @@ rcsplot <- function(data,
       ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "yhat"),
                          color = linecolor,
                          size = linesize)
-    if(show.ci){
-      if(ci.type == "shape"){
+    if(conf.int){
+      if(conf.type == "shape"){
         plot <- plot +
           ggplot2::geom_ribbon(ggplot2::aes_string(exposure, ymin = "lower", ymax = "upper"),
                                alpha = alpha,
@@ -158,8 +159,8 @@ rcsplot <- function(data,
     plot <- ggplot2::ggplot(plotdata) +
       ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "yhat", color = group),
                          size = linesize)
-    if(show.ci){
-      if(ci.type == "shape"){
+    if(conf.int){
+      if(conf.type == "shape"){
         plot <- plot +
           ggplot2::geom_ribbon(ggplot2::aes_string(exposure, ymin = "lower", ymax = "upper", fill = group),
                                alpha = alpha)
