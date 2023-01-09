@@ -106,6 +106,21 @@ regex_detect <- function(string,
     useBytes = useBytes)
 }
 
+regex_extract <- function(string,
+                          pattern,
+                          ignore.case = FALSE,
+                          perl = FALSE,
+                          fixed = FALSE,
+                          useBytes = FALSE){
+  regmatches(string,
+             regexpr(pattern,
+                     string,
+                     ignore.case = ignore.case,
+                     perl = perl,
+                     fixed = fixed,
+                     useBytes = useBytes))
+}
+
 format_pvalue <- function(x, digits) {
   fmt  <- paste0("%.", digits, "f")
 
@@ -121,4 +136,41 @@ format_pvalue <- function(x, digits) {
 
   pVec[posAllZeros]  <- smallPString
   return(pVec)
+}
+
+
+draw_label <- function (label,
+                          x = 0.5,
+                          y = 0.5,
+                          hjust = 0,
+                          vjust = 0,
+                          fontfamily = "serif",
+                          fontface = "plain",
+                          color = "black",
+                          size = 12,
+                          angle = 0,
+                          lineheight = 0.9,
+                          alpha = 1,
+                          colour) {
+  if (!missing(colour)) {
+    color <- colour
+  }
+  text_par <- grid::gpar(col = color,
+                         fontsize   = size,
+                         fontfamily = fontfamily,
+                         fontface   = fontface,
+                         lineheight = lineheight,
+                         alpha      = alpha)
+  text.grob <- grid::textGrob(label,
+                              x = grid::unit(0.5, "npc"),
+                              y = grid::unit(0.5, "npc"),
+                              hjust = hjust,
+                              vjust = vjust,
+                              rot   = angle,
+                              gp    = text_par)
+  ggplot2::annotation_custom(text.grob,
+                             xmin = x,
+                             xmax = x,
+                             ymin = y,
+                             ymax = y)
 }

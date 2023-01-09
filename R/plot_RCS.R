@@ -1,20 +1,25 @@
 rcsplot <- function(data,
-                     outcome = NULL,
-                     time = NULL,
-                     exposure = NULL,
-                     covariates = NULL,
-                     positive = NULL,
-                     group = NULL,
-                     knots = 3,
-                     ref.knot = 1,
-                     ref.value = NULL,
-                     show.pvalue = TRUE,
-                     pvalue.digits = 3,
-                     pvalue.position = c(0, 1),
-                     fontsize = 12,
-                     fontfamily = "serif",
-                     linesize = 0.25,
-                     linecolor = "#0072B5FF", ...){
+                    outcome = NULL,
+                    time = NULL,
+                    exposure = NULL,
+                    covariates = NULL,
+                    positive = NULL,
+                    group = NULL,
+                    knots = c(0.05, 0.35, 0.65, 0.95),
+                    ref.value = "k1",
+                    show.ci = TRUE,
+                    ci.type = c("shape", "line"),
+                    show.pvalue = TRUE,
+                    pvalue.digits = 3,
+                    pvalue.position = NULL,
+                    fontsize = 12,
+                    fontfamily = "serif",
+                    linesize = 0.25,
+                    linecolor = "#0072B5FF",
+                    alpha = 0.1,
+                    xbreaks = NULL,
+                    ybreaks = NULL,
+                    ...) {
 
   # Select variables and check
   outcome    <- select_variable(data, outcome)
@@ -46,13 +51,25 @@ rcsplot <- function(data,
   options(datadist = "ddist_")
 
   # Set reference
-  k <- knots(knots)
-  assign("m_", stats::quantile(data[[exposure]], k), envir = envir)
-  if(is.null(ref.value)){
-    ddist_$limits["Adjust to", exposure] <<- m_[ref.knot]
-  }else{
-    ddist_$limits["Adjust to", exposure] <<- ref.value
+  assign("m_", stats::quantile(data[[exposure]], knots), envir = envir)
+  if(is.character(ref.value)){
+    if(ref.value == "min"){
+      ref.value <- min(data[[exposure]], na.rm = TRUE)
+    }else if(ref.value == "median"){
+      ref.value <- stats::median(data[[exposure]], na.rm = TRUE)
+    }else if(ref.value == "mean"){
+      ref.value <- mean(data[[exposure]], na.rm = TRUE)
+    }else{
+      if(regex_detect(ref.value, pattern = "^k\\d+", ignore.case = TRUE)){
+        ref.value <- regex_extract(ref.value, pattern = "\\d+")
+        ref.value <- as.numeric(ref.value)
+        ref.value <- m_[ref.value]
+      }else{
+        stop("Reference knot must start with k.", call. = FALSE)
+      }
+    }
   }
+  ddist_$limits["Adjust to", exposure] <<- ref.value
 
   # Fit models
   if(is.null(time)){
@@ -61,14 +78,14 @@ rcsplot <- function(data,
       formula <- paste(formula, paste(covariates, collapse = " + "), sep = " + ")
     }
     formula <- stats::as.formula(formula)
-    model <- rms::lrm(formula = formula, data = data)
+    model   <- rms::lrm(formula = formula, data = data)
   }else{
     formula <- sprintf("survival::Surv(%s, %s) ~ rms::rcs(%s, m_)", time, outcome, exposure)
     if(length(covariates) != 0){
       formula <- paste(formula, paste(covariates, collapse = " + "), sep = " + ")
     }
     formula <- stats::as.formula(formula)
-    model <- rms::cph(formula = formula, data = data)
+    model   <- rms::cph(formula = formula, data = data)
   }
 
   # Get plotdata from models
@@ -89,8 +106,16 @@ rcsplot <- function(data,
   }
 
   # Set breaks for x-axis or y-axis
-  xbreaks <- pretty(plotdata[[exposure]])
-  ybreaks <- pretty(c(0, plotdata$upper))
+  if(is.null(xbreaks)){
+    xbreaks <- pretty(plotdata[[exposure]])
+  }
+  if(is.null(ybreaks)){
+    if(show.ci){
+      ybreaks <- pretty(c(0, plotdata$upper))
+    }else{
+      ybreaks <- pretty(c(0, plotdata$yhat))
+    }
+  }
 
   # Set labels for x-axis or y-axis
   xlabels <- attr(data[[exposure]], "label")
@@ -103,16 +128,35 @@ rcsplot <- function(data,
     ylab <- "Hazard ratio"
   }
 
+  ci.type <- match.arg(ci.type)
+
   # Plot by ggplot2
   if (is.null(group)) {
     plot <- ggplot2::ggplot(plotdata) +
-      ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "yhat"), color = linecolor, size = linesize) +
-      ggplot2::geom_ribbon(ggplot2::aes_string(exposure, ymin = "lower", ymax = "upper"), alpha = 0.1, fill = linecolor)
+      ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "yhat"), color = linecolor, size = linesize)
+    if(show.ci){
+      if(ci.type == "shape"){
+        plot <- plot +
+          ggplot2::geom_ribbon(ggplot2::aes_string(exposure, ymin = "lower", ymax = "upper"), alpha = alpha, fill = linecolor)
+      }else{
+        plot <- plot +
+          ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "lower"), color = linecolor, size = linesize, linetype = 2) +
+          ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "upper"), color = linecolor, size = linesize, linetype = 2)
+      }
+    }
   } else{
     plot <- ggplot2::ggplot(plotdata) +
-      ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "yhat", color = group),
-                         size = linesize) +
-      ggplot2::geom_ribbon(ggplot2::aes_string(exposure, ymin = "lower", ymax = "upper", fill = group), alpha = 0.1)
+      ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "yhat", color = group), size = linesize)
+    if(show.ci){
+      if(ci.type == "shape"){
+        plot <- plot +
+          ggplot2::geom_ribbon(ggplot2::aes_string(exposure, ymin = "lower", ymax = "upper", fill = group), alpha = alpha)
+      }else{
+        plot <- plot +
+          ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "lower", color = group), size = linesize, linetype = 2) +
+          ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "upper", color = group), size = linesize, linetype = 2)
+      }
+    }
   }
   plot <- plot +
     ggplot2::geom_hline(yintercept = 1, linetype = 2, size = linesize) +
@@ -140,12 +184,12 @@ rcsplot <- function(data,
 
     p.overall <- format_pvalue(p.overall, digits = pvalue.digits)
     if (!regex_detect(p.overall, "<", fixed = TRUE)) {
-      p.overall <- paste0("P for association = ", p.overall)
+      p.overall <- paste0("P for overall = ", p.overall)
     } else{
       p.overall <-
         regex_replace(p.overall, "<", replacement = "", fixed = TRUE)
       p.overall <-
-        paste0("P for association < ", p.overall)
+        paste0("P for overall < ", p.overall)
     }
 
     p.string <- paste(p.overall, pvalue, sep = "\n")
@@ -157,10 +201,19 @@ rcsplot <- function(data,
       px <- pvalue.position[1]
       py <- pvalue.position[2]
     }
-    plot # + gp_drawlabel(p.string, font.size = fontsize, font.family = fontfamily, x = px, y = py)
+
+    # px <- pvalue.position[1] * max(xbreaks)
+    # py <- pvalue.position[2] * max(ybreaks)
+
+    plot + draw_label(p.string,
+                      size = fontsize,
+                      fontfamily = fontfamily,
+                      x = px,
+                      y = py)
 
   } else{
     plot
   }
 
 }
+
