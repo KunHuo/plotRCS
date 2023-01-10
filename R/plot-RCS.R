@@ -72,14 +72,14 @@
 #'         outcome = "elope",
 #'         exposure = "age",
 #'         covariates = c("race", "gender"),
-#'         knots = konts(5))
+#'         knots = kont(5))
 #'
 #' # Set minimum value of exposure as reference value.
 #' rcsplot(data = aps,
 #'         outcome = "elope",
 #'         exposure = "age",
 #'         covariates = c("race", "gender"),
-#'         knots = konts(5),
+#'         knots = kont(5),
 #'         ref.value = "min")
 #'
 #' # Plot by group
