@@ -4,7 +4,7 @@ Title: Plot Restricted Cubic Splines Curves
 Version: 0.1.0
 Author: Rongrui Huo
 Maintainer: Rongrui Huo <huorongrui@sr.gxmu.edu.cn>
-Description: Plot restricted cubic splines (RCS) curves.
+Description: Simple drawing of restricted cubic spline (RCS) curves through 'ggplot2' package from a logistic regression model or a  Cox proportional hazards regression model.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
@@ -13,3 +13,4 @@ Imports:
     rms
 RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)
+URL: https://github.com/KunHuo/plotRCS

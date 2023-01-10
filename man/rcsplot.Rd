@@ -36,7 +36,7 @@ covariates, and group.}
 
 \item{outcome}{the name of outcome variable in the data.}
 
-\item{time}{the name of time variable in the data.}
+\item{time}{the name of time variable in the data, for Cox regressions.}
 
 \item{exposure}{the name of exposure variable in the data.}
 
@@ -93,7 +93,8 @@ include P for overall association and P for nonlinear, default TRUE.}
 a ggplot2 object.
 }
 \description{
-Plot restricted cubic splines curves
+Drawing of restricted cubic spline (RCS) curves form a logistic
+regression model or a  Cox proportional hazards regression model.
 }
 \examples{
 \dontrun{
@@ -139,4 +140,7 @@ rcsplot(data = lung,
         exposure = "age",
         covariates = c("sex", "ph.ecog"))
 }
+}
+\seealso{
+\link[rms:rms.trans]{rms::rcs}
 }

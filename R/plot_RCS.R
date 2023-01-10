@@ -1,5 +1,9 @@
 #' Plot restricted cubic splines curves
 #'
+#' @description
+#' Drawing of restricted cubic spline (RCS) curves form a logistic
+#' regression model or a  Cox proportional hazards regression model.
+#'
 #' @param data a data frame contain the columns of outcome, time, exposure,
 #' covariates, and group.
 #' @param outcome the name of outcome variable in the data.
@@ -34,7 +38,10 @@
 #' @param alpha alpha for the shape of confidence interval, default 0.1.
 #' @param xbreaks breaks of x-axis.
 #' @param ybreaks breaks of y-axis.
+#' @param explain logical indicating whether or not to explain the figure, default TRUE.
 #' @param ... further arguments.
+#'
+#' @seealso [rms::rcs]
 #'
 #' @return a ggplot2 object.
 #' @export
@@ -105,12 +112,15 @@ rcsplot <- function(data,
                     alpha = 0.1,
                     xbreaks = NULL,
                     ybreaks = NULL,
+                    explain = TRUE,
                     ...) {
 
   # Select variables and check
   outcome    <- select_variable(data, outcome)
   exposure   <- select_variable(data, exposure)
-  covariates <- select_variable(data, covariates)
+  if(!is.null(covariates)){
+    covariates <- select_variable(data, covariates)
+  }
   if(!is.null(time)){
     time <- select_variable(data, time)
   }
@@ -326,15 +336,52 @@ rcsplot <- function(data,
     px <-  min(xbreaks) + (max(xbreaks) - min(xbreaks)) * pvalue.position[1]
     py <-  min(ybreaks) + (max(ybreaks) - min(ybreaks)) * pvalue.position[2]
 
-    plot + draw_label(p.string,
+    plot <- plot + draw_label(p.string,
                       size = fontsize,
                       fontfamily = fontfamily,
                       x = px,
                       y = py,
                       hjust = 0,
                       vjust = 1)
-  } else{
-    plot
   }
+
+  if(explain){
+    title <- sprintf("Figure: Association Between %s and %s Using a Restricted Cubic Spline Regression Model.", exposure, outcome)
+    cat(title)
+    cat("\n")
+    note  <- sprintf("Graphs show %s for %s according to %s",
+                     ifelse(is.null(time), "ORs", "HRs"),
+                     outcome,
+                     exposure)
+
+    if(is.null(covariates)){
+      note <- paste0(note, ".")
+    }else{
+      note <- sprintf("%s adjusted for %s.", note, paste(covariates, collapse = ", "))
+    }
+
+    if(is.null(time)){
+      note <- paste(note, "Data were fitted by a logistic regression model,", sep = " ")
+    }else{
+      note <- paste(note, "Data were fitted by a restricted cubic spline Cox proportional hazards regression model,", sep = " ")
+    }
+
+
+    tmp <- sprintf("and the model was conducted with %d knots at the %s percentiles of %s (reference is %s).",
+                   length(knots),
+                   paste(paste0(knots * 100, "th"), collapse = ", "),
+                   exposure,
+                   "k1")
+    note <- paste(note, tmp, sep = " ")
+
+    note <- paste(note, sprintf("The %s ranges from %.1f to %.1f.",
+                                exposure,
+                                min(data[[exposure]], na.rm = TRUE),
+                                max(data[[exposure]], na.rm = TRUE)), sep = " ")
+
+    cat(note)
+  }
+
+  plot
 }
 
