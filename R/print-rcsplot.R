@@ -7,9 +7,11 @@
 #' @export
 print.rcsplot <- function(x, ...){
   if(attr(x, "explain")){
+    cat("\n")
     cat(attr(x, "title"))
     cat("\n")
     cat(attr(x, "note"))
+    cat("\n")
     plot(x)
   }else{
     plot(x)

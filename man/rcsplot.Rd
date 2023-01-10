@@ -27,6 +27,7 @@ rcsplot(
   alpha = 0.1,
   xbreaks = NULL,
   ybreaks = NULL,
+  explain = TRUE,
   ...
 )
 }
@@ -86,6 +87,8 @@ include P for overall association and P for nonlinear, default TRUE.}
 \item{xbreaks}{breaks of x-axis.}
 
 \item{ybreaks}{breaks of y-axis.}
+
+\item{explain}{logical indicating whether or not to explain the figure, default TRUE.}
 
 \item{...}{further arguments.}
 }
