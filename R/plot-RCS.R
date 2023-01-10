@@ -15,7 +15,7 @@
 #' then positive is defined as the highest level. If outcome is a numerical
 #' variable, then positive is defined as the largest value.
 #' @param group the name of group variable in the data.
-#' @param knots location of knots for RCS.
+#' @param knots location of knots, detail see [knot] function.
 #' @param ref.value referrence value for the RCS curve, 'min' means using the
 #' minimum value of esposure as a reference, 'median' uses the median, 'mean'
 #' uses the mean, 'k1' uses the first knot. 'k2' uses the second knot, 'k3'
@@ -42,6 +42,11 @@
 #' @param ... further arguments.
 #'
 #' @seealso [rms::rcs]
+#'
+#' @references
+#' Harrell, Frank E. Regression modeling strategies: with applications to linear
+#' models, logistic regression, and survival analysis. Vol. 608. New York:
+#' springer, 2001.
 #'
 #' @return a ggplot2 object.
 #' @export
@@ -352,7 +357,9 @@ rcsplot <- function(data,
 
   # Explain the figures, title and note.
   if(explain){
-    title <- sprintf("Figure: Association Between %s and %s Using a Restricted Cubic Spline Regression Model.", exposure, outcome)
+    title <- sprintf("Figure: Association Between %s and %s Using a Restricted Cubic Spline Regression Model.",
+                     exposure,
+                     outcome)
     note  <- sprintf("Graphs show %s for %s according to %s",
                      ifelse(is.null(time), "ORs", "HRs"),
                      outcome,
