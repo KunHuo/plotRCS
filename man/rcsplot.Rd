@@ -29,8 +29,8 @@ rcsplot(
   alpha = 0.1,
   xbreaks = NULL,
   ybreaks = NULL,
-  xlab = NULL,
-  ylab = NULL,
+  xlab = "",
+  ylab = "",
   explain = TRUE,
   ...
 )
