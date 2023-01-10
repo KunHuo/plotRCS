@@ -118,14 +118,17 @@ rcsplot <- function(data,
   # Select variables and check
   outcome    <- select_variable(data, outcome)
   exposure   <- select_variable(data, exposure)
-  if(!is.null(covariates)){
-    covariates <- select_variable(data, covariates)
-  }
   if(!is.null(time)){
     time <- select_variable(data, time)
   }
   if(is.null(group)){
     group <- select_variable(data, group)
+  }
+  if(!is.null(covariates)){
+    covariates <- select_variable(data, covariates)
+    covariates <- setdiff(covariates, outcome)
+    covariates <- setdiff(covariates, exposure)
+    covariates <- setdiff(covariates, time)
   }
 
   # Set positive event
@@ -347,6 +350,7 @@ rcsplot <- function(data,
                       vjust = 1)
   }
 
+  # Explain the figures, title and note.
   if(explain){
     title <- sprintf("Figure: Association Between %s and %s Using a Restricted Cubic Spline Regression Model.", exposure, outcome)
     cat(title)
@@ -390,7 +394,8 @@ rcsplot <- function(data,
                    reference)
     note <- paste(note, tmp, sep = " ")
 
-    # The range of TSH was restricted to 0.34 to 7.5 mIU/L because predictions greater than 7.5 mIU/L (95th percentile) are based on too few data points
+    # The range of TSH was restricted to 0.34 to 7.5 mIU/L because predictions
+    #  greater than 7.5 mIU/L (95th percentile) are based on too few data points
     # note <- paste(note, sprintf("The %s ranges from %.1f to %.1f.",
     #                             exposure,
     #                             min(data[[exposure]], na.rm = TRUE),
@@ -400,7 +405,6 @@ rcsplot <- function(data,
                                 ifelse(is.null(time), "ORs", "HRs"),
                                 ifelse(conf.type == "shape", "shadow shape", "dashed lines"),
                                 as.character(conf.level * 100)), sep = " ")
-
     note <- paste(note,
                   ifelse(is.null(time),
                          "OR, odds ratio; CI, confidence interval.",
