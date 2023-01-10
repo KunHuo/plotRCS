@@ -11,7 +11,7 @@ print.rcsplot <- function(x, ...){
     cat(attr(x, "title"))
     cat("\n")
     cat(attr(x, "note"))
-    cat("\n")
+    cat("\n\n")
     plot(x)
   }else{
     plot(x)
