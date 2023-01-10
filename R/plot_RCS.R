@@ -1,3 +1,41 @@
+#' Plot Restricted Cubic Splines Curves
+#'
+#' @param data a data frame contain the columns of outcome, time, exposure,
+#' covariates, and group.
+#' @param outcome the name of outcome variable in the data.
+#' @param time the name of time variable in the data.
+#' @param exposure the name of exposure variable in the data.
+#' @param covariates the names of covariate variables in the data.
+#' @param positive in which positive of outcome variable to make the comparison.
+#' By default, positive is automatically defined. If outcome is a factor variable,
+#' then positive is defined as the highest level. If outcome is a numerical
+#' variable, then positive is defined as the largest value.
+#' @param group the name of group variable in the data.
+#' @param knots knots
+#' @param ref.value ref.value
+#' @param conf.int logical indicating whether or not to draw confidence interval.
+#' Defaults to TRUE.
+#' @param conf.level the confidence level to use for the confidence interval if
+#' conf.int = TRUE. Must be strictly greater than 0 and less than 1. Defaults to
+#' 0.95, which corresponds to a 95 percent confidence interval.
+#' @param conf.type conf.type
+#' @param pvalue logical indicating whether or not to show P values,
+#' include P for overall association and P for nonlinear, default TRUE.
+#' @param pvalue.digits digits for P values, default 3.
+#' @param pvalue.position position for P value, numeric vector of length two (x-axis and y-axis).
+#' @param fontsize font size, default 12.
+#' @param fontfamily font family, default 'serif'.
+#' @param linesize line size, default 0.25.
+#' @param linecolor line color, default '#0072B5FF'.
+#' @param alpha alpha for the shape of confidence interval, default 0.1.
+#' @param xbreaks breaks of x-axis.
+#' @param ybreaks breaks of y-axis.
+#' @param ... more arguments.
+#'
+#' @return a ggplot2 object.
+#' @export
+#'
+#' @examples
 rcsplot <- function(data,
                     outcome = NULL,
                     time = NULL,
