@@ -12,19 +12,23 @@
 #' variable, then positive is defined as the largest value.
 #' @param group the name of group variable in the data.
 #' @param knots location of knots for RCS.
-#' @param ref.value ref.value
+#' @param ref.value referrence value for the RCS curve, 'min' means using the
+#' minimum value of esposure as a reference, 'median' uses the median, 'mean'
+#' uses the mean, 'k1' uses the first knot. 'k2' uses the second knot, 'k3'
+#' uses the third 'knot', and so on. In addition, you can directly set the
+#' numerical vector as the reference value.
 #' @param conf.int logical indicating whether or not to draw confidence interval.
 #' Defaults to TRUE.
 #' @param conf.level the confidence level to use for the confidence interval if
 #' conf.int = TRUE. Must be strictly greater than 0 and less than 1. Defaults to
 #' 0.95, which corresponds to a 95 percent confidence interval.
-#' @param conf.type conf.type
+#' @param conf.type confidence interval type of 'shape' (default) or 'line'.
 #' @param pvalue logical indicating whether or not to show P values,
 #' include P for overall association and P for nonlinear, default TRUE.
 #' @param pvalue.digits digits for P values, default 3.
 #' @param pvalue.position position for P value, numeric vector of length two (x-axis and y-axis).
 #' @param fontsize font size, default 12.
-#' @param fontfamily font family, default 'serif'.
+#' @param fontfamily font family, default 'serif' (Times New Roman).
 #' @param linesize line size, default 0.25.
 #' @param linecolor line color, default '#0072B5FF'.
 #' @param alpha alpha for the shape of confidence interval, default 0.1.

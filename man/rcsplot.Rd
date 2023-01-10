@@ -49,9 +49,13 @@ variable, then positive is defined as the largest value.}
 
 \item{group}{the name of group variable in the data.}
 
-\item{knots}{knots}
+\item{knots}{location of knots for RCS.}
 
-\item{ref.value}{ref.value}
+\item{ref.value}{referrence value for the RCS curve, 'min' means using the
+minimum value of esposure as a reference, 'median' uses the median, 'mean'
+uses the mean, 'k1' uses the first knot. 'k2' uses the second knot, 'k3'
+uses the third 'knot', and so on. In addition, you can directly set the
+numerical vector as the reference value.}
 
 \item{conf.int}{logical indicating whether or not to draw confidence interval.
 Defaults to TRUE.}
@@ -60,7 +64,7 @@ Defaults to TRUE.}
 conf.int = TRUE. Must be strictly greater than 0 and less than 1. Defaults to
 0.95, which corresponds to a 95 percent confidence interval.}
 
-\item{conf.type}{conf.type}
+\item{conf.type}{confidence interval type of 'shape' (default) or 'line'.}
 
 \item{pvalue}{logical indicating whether or not to show P values,
 include P for overall association and P for nonlinear, default TRUE.}
@@ -71,7 +75,7 @@ include P for overall association and P for nonlinear, default TRUE.}
 
 \item{fontsize}{font size, default 12.}
 
-\item{fontfamily}{font family, default 'serif'.}
+\item{fontfamily}{font family, default 'serif' (Times New Roman).}
 
 \item{linesize}{line size, default 0.25.}
 
