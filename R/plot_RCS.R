@@ -1,4 +1,4 @@
-#' Plot Restricted Cubic Splines Curves
+#' Plot restricted cubic splines curves
 #'
 #' @param data a data frame contain the columns of outcome, time, exposure,
 #' covariates, and group.
@@ -36,6 +36,39 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' # aps dataset from aplore3 package
+#' install.packages(aplore3)
+#' library(aps)
+#'
+#' # RCS curves for logistic
+#' rcsplot(data = aps,
+#'         outcome = "elope",
+#'         exposure = "age",
+#'         covariates = c("race", "gender"))
+#'
+#' # Set 5 knots.
+#' rcsplot(data = aps,
+#'         outcome = "elope",
+#'         exposure = "age",
+#'         covariates = c("race", "gender"),
+#'         knots = konts(5))
+#'
+#' # Set minimum value of exposure as reference value.
+#' rcsplot(data = aps,
+#'         outcome = "elope",
+#'         exposure = "age",
+#'         covariates = c("race", "gender"),
+#'         knots = konts(5),
+#'         ref.value = "min")
+#'
+#' # Plot by group
+#' rcsplot(data = aps,
+#'         outcome = "elope",
+#'         exposure = "age",
+#'         covariates = c("race", "gender"),
+#'         group = "gender")
+#' }
 rcsplot <- function(data,
                     outcome = NULL,
                     time = NULL,

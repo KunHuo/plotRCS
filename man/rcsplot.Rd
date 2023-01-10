@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_RCS.R
 \name{rcsplot}
 \alias{rcsplot}
-\title{Plot Restricted Cubic Splines Curves}
+\title{Plot restricted cubic splines curves}
 \usage{
 rcsplot(
   data,
@@ -89,5 +89,40 @@ include P for overall association and P for nonlinear, default TRUE.}
 a ggplot2 object.
 }
 \description{
-Plot Restricted Cubic Splines Curves
+Plot restricted cubic splines curves
+}
+\examples{
+\dontrun{
+# aps dataset from aplore3 package
+install.packages(aplore3)
+library(aps)
+
+# RCS curves for logistic
+rcsplot(data = aps,
+        outcome = "elope",
+        exposure = "age",
+        covariates = c("race", "gender"))
+
+# Set 5 knots.
+rcsplot(data = aps,
+        outcome = "elope",
+        exposure = "age",
+        covariates = c("race", "gender"),
+        knots = konts(5))
+
+# Set minimum value of exposure as reference value.
+rcsplot(data = aps,
+        outcome = "elope",
+        exposure = "age",
+        covariates = c("race", "gender"),
+        knots = konts(5),
+        ref.value = "min")
+
+# Plot by group
+rcsplot(data = aps,
+        outcome = "elope",
+        exposure = "age",
+        covariates = c("race", "gender"),
+        group = "gender")
+}
 }
