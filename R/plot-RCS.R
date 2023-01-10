@@ -16,11 +16,15 @@
 #' variable, then positive is defined as the largest value.
 #' @param group the name of group variable in the data.
 #' @param knots location of knots, detail see [knot] function.
+#' @param knots.line logical indicating whether or not to show the vertical lines
+#' for the knots, default FALSE.
 #' @param ref.value referrence value for the RCS curve, 'min' means using the
 #' minimum value of esposure as a reference, 'median' uses the median, 'mean'
 #' uses the mean, 'k1' uses the first knot. 'k2' uses the second knot, 'k3'
 #' uses the third 'knot', and so on. In addition, you can directly set the
 #' numerical vector as the reference value.
+#' @param ref.line logical indicating whether or not to show the referrence line,
+#' default TRUE.
 #' @param conf.int logical indicating whether or not to draw confidence interval.
 #' Defaults to TRUE.
 #' @param conf.level the confidence level to use for the confidence interval if
@@ -109,7 +113,9 @@ rcsplot <- function(data,
                     positive = NULL,
                     group = NULL,
                     knots = c(0.05, 0.35, 0.65, 0.95),
+                    knots.line = FALSE,
                     ref.value = "k1",
+                    ref.line = TRUE,
                     conf.int = TRUE,
                     conf.level = 0.95,
                     conf.type = c("shape", "line"),
@@ -301,7 +307,7 @@ rcsplot <- function(data,
   } else{
     plot <- ggplot2::ggplot(plotdata) +
       ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "yhat", color = group),
-                         size = linesize)
+                         linewidth = linesize)
     if(conf.int){
       if(conf.type == "shape"){
         plot <- plot +
@@ -310,22 +316,34 @@ rcsplot <- function(data,
       }else{
         plot <- plot +
           ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "lower", color = group),
-                             size = linesize,
+                             linewidth = linesize,
                              linetype = 2) +
           ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "upper", color = group),
-                             size = linesize,
+                             linewidth = linesize,
                              linetype = 2)
       }
     }
   }
+
+  if(ref.line){
+    plot <- plot +
+      ggplot2::geom_hline(yintercept = 1, linetype = 2, linewidth = linesize)
+  }
+
   plot <- plot +
-    ggplot2::geom_hline(yintercept = 1, linetype = 2, size = linesize) +
     gg_theme_sci(font.size = fontsize, font.family = fontfamily) +
     ggplot2::xlab(xlab) +
     ggplot2::ylab(ylab) +
     ggplot2::coord_cartesian(expand = FALSE) +
     ggplot2::scale_x_continuous(breaks = xbreaks, limits = c(min(xbreaks), max(xbreaks))) +
     ggplot2::scale_y_continuous(breaks = ybreaks, limits = c(min(ybreaks), max(ybreaks)))
+
+  if(knots.line){
+    plot <- plot +
+      ggplot2::geom_vline(xintercept = stats::quantile(data[[exposure]], knots),
+                          linetype = 3,
+                          linewidth = linesize)
+  }
 
   # Show P value
   if (pvalue) {
