@@ -103,7 +103,7 @@ regression model or a  Cox proportional hazards regression model.
 \dontrun{
 # aps dataset from aplore3 package
 install.packages(aplore3)
-library(aps)
+library(aplore3)
 
 # RCS curves for logistic
 rcsplot(data = aps,
