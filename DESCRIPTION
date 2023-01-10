@@ -1,7 +1,7 @@
 Package: plotRCS
 Type: Package
 Title: Plot Restricted Cubic Splines Curves
-Version: 0.1.0
+Version: 0.1.1
 Author: Rongrui Huo
 Maintainer: Rongrui Huo <huorongrui@sr.gxmu.edu.cn>
 Description: Simple drawing of restricted cubic spline (RCS) curves through 'ggplot2' package from a logistic regression model or a  Cox proportional hazards regression model.
