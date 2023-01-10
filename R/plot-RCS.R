@@ -439,4 +439,3 @@ rcsplot <- function(data,
 
   plot
 }
-
