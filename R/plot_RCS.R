@@ -3,7 +3,7 @@
 #' @param data a data frame contain the columns of outcome, time, exposure,
 #' covariates, and group.
 #' @param outcome the name of outcome variable in the data.
-#' @param time the name of time variable in the data.
+#' @param time the name of time variable in the data, for Cox regressions.
 #' @param exposure the name of exposure variable in the data.
 #' @param covariates the names of covariate variables in the data.
 #' @param positive in which positive of outcome variable to make the comparison.

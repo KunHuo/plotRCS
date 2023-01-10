@@ -12,3 +12,4 @@ Imports:
     ggplot2,
     rms
 RoxygenNote: 7.2.3
+Roxygen: list(markdown = TRUE)
