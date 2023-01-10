@@ -150,22 +150,24 @@ rcsplot <- function(data,
   assign("m_", stats::quantile(data[[exposure]], knots), envir = envir)
   if(is.character(ref.value)){
     if(ref.value == "min"){
-      ref.value <- min(data[[exposure]], na.rm = TRUE)
+      ref.value1 <- min(data[[exposure]], na.rm = TRUE)
     }else if(ref.value == "median"){
-      ref.value <- stats::median(data[[exposure]], na.rm = TRUE)
+      ref.value1 <- stats::median(data[[exposure]], na.rm = TRUE)
     }else if(ref.value == "mean"){
-      ref.value <- mean(data[[exposure]], na.rm = TRUE)
+      ref.value1 <- mean(data[[exposure]], na.rm = TRUE)
     }else{
       if(regex_detect(ref.value, pattern = "^k\\d+", ignore.case = TRUE)){
-        ref.value <- regex_extract(ref.value, pattern = "\\d+")
-        ref.value <- as.numeric(ref.value)
-        ref.value <- m_[ref.value]
+        ref.value1 <- regex_extract(ref.value, pattern = "\\d+")
+        ref.value1 <- as.numeric(ref.value1)
+        ref.value1 <- m_[ref.value1]
       }else{
         stop("Reference knot must start with k.", call. = FALSE)
       }
     }
+  }else{
+    ref.value1 <- ref.value
   }
-  eval(parse(text = "ddist_$limits['Adjust to', exposure] <<- ref.value"))
+  eval(parse(text = "ddist_$limits['Adjust to', exposure] <<- ref.value1"))
 
   # Fit models
   if(is.null(time)){
@@ -366,18 +368,44 @@ rcsplot <- function(data,
       note <- paste(note, "Data were fitted by a restricted cubic spline Cox proportional hazards regression model,", sep = " ")
     }
 
+    if(is.character(ref.value)){
+      if(ref.value == "min"){
+        reference <- "the minimum"
+      }else if(ref.value == "median"){
+        reference <- "the median"
+      }else if(ref.value == "mean"){
+        reference <- "mean"
+      }else{
+        reference <- regex_extract(ref.value, pattern = "\\d+")
+        reference <-  paste("the", paste0(knots * 100, "th")[as.numeric(reference)], "percentile", sep = " ")
+      }
+    }else{
+      reference <- ref.value
+    }
 
     tmp <- sprintf("and the model was conducted with %d knots at the %s percentiles of %s (reference is %s).",
                    length(knots),
                    paste(paste0(knots * 100, "th"), collapse = ", "),
                    exposure,
-                   "k1")
+                   reference)
     note <- paste(note, tmp, sep = " ")
 
-    note <- paste(note, sprintf("The %s ranges from %.1f to %.1f.",
-                                exposure,
-                                min(data[[exposure]], na.rm = TRUE),
-                                max(data[[exposure]], na.rm = TRUE)), sep = " ")
+    # The range of TSH was restricted to 0.34 to 7.5 mIU/L because predictions greater than 7.5 mIU/L (95th percentile) are based on too few data points
+    # note <- paste(note, sprintf("The %s ranges from %.1f to %.1f.",
+    #                             exposure,
+    #                             min(data[[exposure]], na.rm = TRUE),
+    #                             max(data[[exposure]], na.rm = TRUE)), sep = " ")
+
+    note <- paste(note, sprintf("Solid lines indicate %s, and %s indicate %s%% CIs.",
+                                ifelse(is.null(time), "ORs", "HRs"),
+                                ifelse(conf.type == "shape", "shadow shape", "dashed lines"),
+                                as.character(conf.level * 100)), sep = " ")
+
+    note <- paste(note,
+                  ifelse(is.null(time),
+                         "OR, odds ratio; CI, confidence interval.",
+                         "HR, hazard ratio; CI, confidence interval." ),
+                  sep = " ")
 
     cat(note)
   }
