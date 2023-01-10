@@ -30,7 +30,7 @@
 #' @param alpha alpha for the shape of confidence interval, default 0.1.
 #' @param xbreaks breaks of x-axis.
 #' @param ybreaks breaks of y-axis.
-#' @param ... more arguments.
+#' @param ... further arguments.
 #'
 #' @return a ggplot2 object.
 #' @export
