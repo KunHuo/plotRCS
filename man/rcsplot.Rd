@@ -20,6 +20,8 @@ rcsplot(
   pvalue = TRUE,
   pvalue.digits = 3,
   pvalue.position = c(0.02, 0.98),
+  pvalue.label.overall = "P for overall",
+  pvalue.label.nonlinear = "P for nonlinear",
   fontsize = 12,
   fontfamily = "serif",
   linesize = 0.25,
@@ -72,7 +74,12 @@ include P for overall association and P for nonlinear, default TRUE.}
 
 \item{pvalue.digits}{digits for P values, default 3.}
 
-\item{pvalue.position}{position for P value, numeric vector of length two (x-axis and y-axis).}
+\item{pvalue.position}{position for P value, numeric vector of length two
+(x-axis and y-axis).}
+
+\item{pvalue.label.overall}{label for P value of overall.}
+
+\item{pvalue.label.nonlinear}{label for P value of nonlinear.}
 
 \item{fontsize}{font size, default 12.}
 
@@ -88,7 +95,8 @@ include P for overall association and P for nonlinear, default TRUE.}
 
 \item{ybreaks}{breaks of y-axis.}
 
-\item{explain}{logical indicating whether or not to explain the figure, default TRUE.}
+\item{explain}{logical indicating whether or not to explain the figure,
+default TRUE.}
 
 \item{...}{further arguments.}
 }
@@ -150,5 +158,5 @@ models, logistic regression, and survival analysis. Vol. 608. New York:
 springer, 2001.
 }
 \seealso{
-\link[rms:rms.trans]{rms::rcs}
+\link[rms:rms.trans]{rms::rcs}, \link{knot}
 }
