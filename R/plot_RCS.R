@@ -72,6 +72,16 @@
 #'         exposure = "age",
 #'         covariates = c("race", "gender"),
 #'         group = "gender")
+#'
+#' # lung dataset from survival package
+#' library(survival)
+#'
+#' # RCS curves for Cox
+#' rcsplot(data = lung,
+#'         outcome = "status",
+#'         time = "time",
+#'         exposure = "age",
+#'         covariates = c("sex", "ph.ecog"))
 #' }
 rcsplot <- function(data,
                     outcome = NULL,
