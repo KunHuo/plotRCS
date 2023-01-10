@@ -125,8 +125,8 @@ rcsplot <- function(data,
                     alpha = 0.1,
                     xbreaks = NULL,
                     ybreaks = NULL,
-                    xlab = NULL,
-                    ylab = NULL,
+                    xlab = "",
+                    ylab = "",
                     explain = TRUE,
                     ...) {
 
@@ -244,13 +244,13 @@ rcsplot <- function(data,
   }
 
   # Set labels for x-axis or y-axis
-  if(is.null(xlab)){
+  if(xlab == ""){
     xlab <- attr(data[[exposure]], "label")
     if (is.null(xlab)) {
       xlab <- exposure
     }
   }
-  if(is.null(ylab)){
+  if(ylab == ""){
     if (is.null(time)) {
       ylab <- "Odds ratio"
       if(conf.int){
