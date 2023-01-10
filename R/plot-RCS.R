@@ -30,7 +30,10 @@
 #' @param pvalue logical indicating whether or not to show P values,
 #' include P for overall association and P for nonlinear, default TRUE.
 #' @param pvalue.digits digits for P values, default 3.
-#' @param pvalue.position position for P value, numeric vector of length two (x-axis and y-axis).
+#' @param pvalue.position position for P value, numeric vector of length two
+#' (x-axis and y-axis).
+#' @param pvalue.label.overall label for P value of overall.
+#' @param pvalue.label.nonlinear label for P value of nonlinear.
 #' @param fontsize font size, default 12.
 #' @param fontfamily font family, default 'serif' (Times New Roman).
 #' @param linesize line size, default 0.25.
@@ -38,10 +41,11 @@
 #' @param alpha alpha for the shape of confidence interval, default 0.1.
 #' @param xbreaks breaks of x-axis.
 #' @param ybreaks breaks of y-axis.
-#' @param explain logical indicating whether or not to explain the figure, default TRUE.
+#' @param explain logical indicating whether or not to explain the figure,
+#' default TRUE.
 #' @param ... further arguments.
 #'
-#' @seealso [rms::rcs]
+#' @seealso [rms::rcs], [knot]
 #'
 #' @references
 #' Harrell, Frank E. Regression modeling strategies: with applications to linear
@@ -110,6 +114,8 @@ rcsplot <- function(data,
                     pvalue = TRUE,
                     pvalue.digits = 3,
                     pvalue.position = c(0.02, 0.98),
+                    pvalue.label.overall = "P for overall",
+                    pvalue.label.nonlinear = "P for nonlinear",
                     fontsize = 12,
                     fontfamily = "serif",
                     linesize = 0.25,
@@ -314,20 +320,20 @@ rcsplot <- function(data,
 
     p.value <- format_pvalue(p.value, digits = pvalue.digits)
     if (!regex_detect(p.value, "<", fixed = TRUE)) {
-      p.value <- paste0("P for nonlinear = ", p.value)
+      p.value <- paste0(pvalue.label.nonlinear, " = ", p.value)
     } else{
       p.value <- regex_replace(p.value, "<", replacement = "", fixed = TRUE)
-      p.value <- paste0("P for nonlinear < ", p.value)
+      p.value <- paste0(pvalue.label.nonlinear, " < ", p.value)
     }
 
     p.overall <- format_pvalue(p.overall, digits = pvalue.digits)
     if (!regex_detect(p.overall, "<", fixed = TRUE)) {
-      p.overall <- paste0("P for overall = ", p.overall)
+      p.overall <- paste0(pvalue.label.overall, " = ", p.overall)
     } else{
       p.overall <-
         regex_replace(p.overall, "<", replacement = "", fixed = TRUE)
       p.overall <-
-        paste0("P for overall < ", p.overall)
+        paste0(pvalue.label.overall, " < ", p.overall)
     }
 
     p.string <- paste(p.overall, p.value, sep = "\n")
