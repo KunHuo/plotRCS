@@ -11,7 +11,7 @@
 #' then positive is defined as the highest level. If outcome is a numerical
 #' variable, then positive is defined as the largest value.
 #' @param group the name of group variable in the data.
-#' @param knots knots
+#' @param knots location of knots for RCS.
 #' @param ref.value ref.value
 #' @param conf.int logical indicating whether or not to draw confidence interval.
 #' Defaults to TRUE.
