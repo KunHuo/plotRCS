@@ -13,7 +13,9 @@ rcsplot(
   positive = NULL,
   group = NULL,
   knots = c(0.05, 0.35, 0.65, 0.95),
+  knots.line = FALSE,
   ref.value = "k1",
+  ref.line = TRUE,
   conf.int = TRUE,
   conf.level = 0.95,
   conf.type = c("shape", "line"),
@@ -56,11 +58,17 @@ variable, then positive is defined as the largest value.}
 
 \item{knots}{location of knots, detail see \link{knot} function.}
 
+\item{knots.line}{logical indicating whether or not to show the vertical lines
+for the knots, default FALSE.}
+
 \item{ref.value}{referrence value for the RCS curve, 'min' means using the
 minimum value of esposure as a reference, 'median' uses the median, 'mean'
 uses the mean, 'k1' uses the first knot. 'k2' uses the second knot, 'k3'
 uses the third 'knot', and so on. In addition, you can directly set the
 numerical vector as the reference value.}
+
+\item{ref.line}{logical indicating whether or not to show the referrence line,
+default TRUE.}
 
 \item{conf.int}{logical indicating whether or not to draw confidence interval.
 Defaults to TRUE.}
