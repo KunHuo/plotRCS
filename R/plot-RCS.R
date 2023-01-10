@@ -41,6 +41,8 @@
 #' @param alpha alpha for the shape of confidence interval, default 0.1.
 #' @param xbreaks breaks of x-axis.
 #' @param ybreaks breaks of y-axis.
+#' @param xlab label of x-axis.
+#' @param ylab label of y-axis.
 #' @param explain logical indicating whether or not to explain the figure,
 #' default TRUE.
 #' @param ... further arguments.
@@ -123,6 +125,8 @@ rcsplot <- function(data,
                     alpha = 0.1,
                     xbreaks = NULL,
                     ybreaks = NULL,
+                    xlab = NULL,
+                    ylab = NULL,
                     explain = TRUE,
                     ...) {
 
@@ -240,19 +244,23 @@ rcsplot <- function(data,
   }
 
   # Set labels for x-axis or y-axis
-  xlabels <- attr(data[[exposure]], "label")
-  if (is.null(xlabels)) {
-    xlabels <- exposure
-  }
-  if (is.null(time)) {
-    ylab <- "Odds ratio"
-    if(conf.int){
-      ylab <- sprintf("%s (%s%% CI)", ylab, as.character(conf.level * 100))
+  if(is.null(xlab)){
+    xlab <- attr(data[[exposure]], "label")
+    if (is.null(xlab)) {
+      xlab <- exposure
     }
-  } else{
-    ylab <- "Hazard ratio"
-    if(conf.int){
-      ylab <- sprintf("%s (%s%% CI)", ylab, as.character(conf.level * 100))
+  }
+  if(is.null(ylab)){
+    if (is.null(time)) {
+      ylab <- "Odds ratio"
+      if(conf.int){
+        ylab <- sprintf("%s (%s%% CI)", ylab, as.character(conf.level * 100))
+      }
+    } else{
+      ylab <- "Hazard ratio"
+      if(conf.int){
+        ylab <- sprintf("%s (%s%% CI)", ylab, as.character(conf.level * 100))
+      }
     }
   }
 
@@ -305,7 +313,7 @@ rcsplot <- function(data,
   plot <- plot +
     ggplot2::geom_hline(yintercept = 1, linetype = 2, size = linesize) +
     gg_theme_sci(font.size = fontsize, font.family = fontfamily) +
-    ggplot2::xlab(xlabels) +
+    ggplot2::xlab(xlab) +
     ggplot2::ylab(ylab) +
     ggplot2::coord_cartesian(expand = FALSE) +
     ggplot2::scale_x_continuous(breaks = xbreaks, limits = c(min(xbreaks), max(xbreaks))) +
