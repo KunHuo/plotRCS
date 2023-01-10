@@ -353,8 +353,6 @@ rcsplot <- function(data,
   # Explain the figures, title and note.
   if(explain){
     title <- sprintf("Figure: Association Between %s and %s Using a Restricted Cubic Spline Regression Model.", exposure, outcome)
-    cat(title)
-    cat("\n")
     note  <- sprintf("Graphs show %s for %s according to %s",
                      ifelse(is.null(time), "ORs", "HRs"),
                      outcome,
@@ -411,8 +409,12 @@ rcsplot <- function(data,
                          "HR, hazard ratio; CI, confidence interval." ),
                   sep = " ")
 
-    cat(note)
+    attr(plot, "title") <- title
+    attr(plot, "note")  <- note
   }
+
+  attr(plot, "explain")  <- explain
+  class(plot) <- c("rcsplot", class(plot))
 
   plot
 }
