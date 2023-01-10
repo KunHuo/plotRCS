@@ -10,7 +10,7 @@ rcsplot <- function(data,
                     conf.int = TRUE,
                     conf.level = 0.95,
                     conf.type = c("shape", "line"),
-                    show.pvalue = TRUE,
+                    pvalue = TRUE,
                     pvalue.digits = 3,
                     pvalue.position = c(0.02, 0.98),
                     fontsize = 12,
@@ -89,11 +89,21 @@ rcsplot <- function(data,
     model   <- rms::cph(formula = formula, data = data)
   }
 
+  # Check conf.level.
+  if(conf.level < 0 | conf.level > 1){
+    stop("The conf.level must be strictly between 0 and 1.", call. = FALSE)
+  }
+
   # Get plotdata from models
   if(is.null(group)){
-    eval.text <- sprintf("rms::Predict(model, %s, ref.zero = TRUE, fun = exp)", exposure)
+    eval.text <- sprintf("rms::Predict(model, %s, conf.int = %f, ref.zero = TRUE, fun = exp)",
+                         exposure,
+                         conf.level)
   }else{
-    eval.text <- sprintf("rms::Predict(model, %s, %s, ref.zero = TRUE, fun = exp)", exposure, group)
+    eval.text <- sprintf("rms::Predict(model, %s, %s, conf.int = %f, ref.zero = TRUE, fun = exp)",
+                         exposure,
+                         group,
+                         conf.level)
   }
   plotdata <- eval(parse(text = eval.text))
   plotdata <- as.data.frame(plotdata)
@@ -125,8 +135,14 @@ rcsplot <- function(data,
   }
   if (is.null(time)) {
     ylab <- "Odds ratio"
+    if(conf.int){
+      ylab <- sprintf("%s (%s%% CI)", ylab, as.character(conf.level * 100))
+    }
   } else{
     ylab <- "Hazard ratio"
+    if(conf.int){
+      ylab <- sprintf("%s (%s%% CI)", ylab, as.character(conf.level * 100))
+    }
   }
 
   conf.type <- match.arg(conf.type)
@@ -185,18 +201,18 @@ rcsplot <- function(data,
     ggplot2::scale_y_continuous(breaks = ybreaks, limits = c(min(ybreaks), max(ybreaks)))
 
   # Show P value
-  if (show.pvalue) {
+  if (pvalue) {
     pdata  <- stats::anova(model)
     pdata  <- as.data.frame(pdata)
-    pvalue <- pdata[2, 3]
+    p.value <- pdata[2, 3]
     p.overall <- pdata[1, 3]
 
-    pvalue <- format_pvalue(pvalue, digits = pvalue.digits)
-    if (!regex_detect(pvalue, "<", fixed = TRUE)) {
-      pvalue <- paste0("P for nonlinear = ", pvalue)
+    p.value <- format_pvalue(p.value, digits = pvalue.digits)
+    if (!regex_detect(p.value, "<", fixed = TRUE)) {
+      p.value <- paste0("P for nonlinear = ", p.value)
     } else{
-      pvalue <- regex_replace(pvalue, "<", replacement = "", fixed = TRUE)
-      pvalue <- paste0("P for nonlinear < ", pvalue)
+      p.value <- regex_replace(p.value, "<", replacement = "", fixed = TRUE)
+      p.value <- paste0("P for nonlinear < ", p.value)
     }
 
     p.overall <- format_pvalue(p.overall, digits = pvalue.digits)
@@ -209,7 +225,18 @@ rcsplot <- function(data,
         paste0("P for overall < ", p.overall)
     }
 
-    p.string <- paste(p.overall, pvalue, sep = "\n")
+    p.string <- paste(p.overall, p.value, sep = "\n")
+
+    # Check p value position.
+    if(length(pvalue.position) != 2L){
+      stop("The pvalue.position must of length 2.", call. = FALSE)
+    }
+    if(pvalue.position[1] < 0 | pvalue.position[1] > 1){
+      stop("The first element of pvalue.position must be strictly between 0 and 1.", call. = FALSE)
+    }
+    if(pvalue.position[2] < 0 | pvalue.position[2] > 1){
+      stop("The Second element of pvalue.position must be strictly between 0 and 1.", call. = FALSE)
+    }
 
     px <-  min(xbreaks) + (max(xbreaks) - min(xbreaks)) * pvalue.position[1]
     py <-  min(ybreaks) + (max(ybreaks) - min(ybreaks)) * pvalue.position[2]
@@ -224,6 +251,5 @@ rcsplot <- function(data,
   } else{
     plot
   }
-
 }
 
