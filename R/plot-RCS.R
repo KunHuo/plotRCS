@@ -146,6 +146,14 @@ rcsplot <- function(data,
     covariates <- setdiff(covariates, time)
   }
 
+  if(length(unique(data[[outcome]])) != 2L){
+    stop("The number of levels for the outcome must be 2.", call. = FALSE)
+  }
+
+  if(!is.numeric(data[[exposure]])){
+    stop("The exposure variable must be numeric.", call. = FALSE)
+  }
+
   # Set positive event
   if(is.null(positive)){
     if(is.numeric(data[[outcome]])){
