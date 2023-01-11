@@ -172,5 +172,5 @@ models, logistic regression, and survival analysis. Vol. 608. New York:
 springer, 2001.
 }
 \seealso{
-\link[rms:rms.trans]{rms::rcs}, \link{knot}
+\link{rcs}, \link{knot}
 }

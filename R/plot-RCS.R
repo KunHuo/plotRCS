@@ -51,7 +51,7 @@
 #' default TRUE.
 #' @param ... further arguments.
 #'
-#' @seealso [rms::rcs], [knot]
+#' @seealso [rcs], [knot]
 #'
 #' @references
 #' Harrell, Frank E. Regression modeling strategies: with applications to linear

@@ -3,3 +3,4 @@
 S3method(print,rcsplot)
 export(knot)
 export(rcsplot)
+importFrom(rms,rcs)
