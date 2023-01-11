@@ -53,58 +53,8 @@
 #'
 #' @seealso [rcs], [knot]
 #'
-#' @references
-#' Harrell, Frank E. Regression modeling strategies: with applications to linear
-#' models, logistic regression, and survival analysis. Vol. 608. New York:
-#' springer, 2001.
-#'
 #' @return a ggplot2 object.
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' # aps dataset from aplore3 package
-#' install.packages(aplore3)
-#' library(aplore3)
-#'
-#' # RCS curves for logistic
-#' rcsplot(data = aps,
-#'         outcome = "elope",
-#'         exposure = "age",
-#'         covariates = c("race", "gender"))
-#'
-#' # Set 5 knots.
-#' rcsplot(data = aps,
-#'         outcome = "elope",
-#'         exposure = "age",
-#'         covariates = c("race", "gender"),
-#'         knots = kont(5))
-#'
-#' # Set minimum value of exposure as reference value.
-#' rcsplot(data = aps,
-#'         outcome = "elope",
-#'         exposure = "age",
-#'         covariates = c("race", "gender"),
-#'         knots = kont(5),
-#'         ref.value = "min")
-#'
-#' # Plot by group
-#' rcsplot(data = aps,
-#'         outcome = "elope",
-#'         exposure = "age",
-#'         covariates = c("race", "gender"),
-#'         group = "gender")
-#'
-#' # lung dataset from survival package
-#' library(survival)
-#'
-#' # RCS curves for Cox
-#' rcsplot(data = lung,
-#'         outcome = "status",
-#'         time = "time",
-#'         exposure = "age",
-#'         covariates = c("sex", "ph.ecog"))
-#' }
 rcsplot <- function(data,
                     outcome = NULL,
                     time = NULL,

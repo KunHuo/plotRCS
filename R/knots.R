@@ -20,8 +20,6 @@
 #' Harrell, Frank E. Regression modeling strategies: with applications to linear
 #' models, logistic regression, and survival analysis. Vol. 608. New York:
 #' springer, 2001.
-#'
-#' Croxford, R. (2016). Restricted Cubic Spline Regression : A Brief Introduction.
 #' @export
 knot <- function(k = 3){
   if(k < 3 | k > 7){
