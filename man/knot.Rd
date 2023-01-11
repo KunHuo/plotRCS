@@ -16,7 +16,7 @@ a numeric vector.
 Location of knots from Harrell (2015), Regression Modeling Strategies.
 }
 \details{
-Harrell (2001) states that for many datasets, k = 4 offers an adequate fit of
+Harrell (2015) states that for many datasets, k = 4 offers an adequate fit of
 the model and is a good compromise between flexibility and loss of pocesion
 caused by overfitting a small sample”. If the sample size is small, three knots
 should be used in order to have enough observations in between the knots to be
