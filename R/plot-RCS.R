@@ -53,8 +53,56 @@
 #'
 #' @seealso [rcs], [knot]
 #'
-#' @return a ggplot2 object.
+#' @return A ggplot2 object with class 'rcsplot' containing the attributes of 'title' and 'note'.
 #' @export
+#'
+#' @examples
+#' # View data
+#' head(cancer)
+#'
+#' # RCS curves for a logistic regression model
+#' rcsplot(data = cancer,
+#'         outcome = "status",
+#'         exposure = "age",
+#'         covariates = c("sex", "race", "size", "metastasis"))
+#'
+#' # RCS curves for a Cox regression model
+#' rcsplot(data = cancer,
+#'         outcome = "status",
+#'         time = "time",
+#'         exposure = "age",
+#'         covariates = c("sex", "race", "size", "metastasis"))
+#'
+#' # Unadjusted covariates
+#' rcsplot(data = cancer,
+#'         outcome = "status",
+#'         time = "time",
+#'         exposure = "age")
+#'
+#' # By group
+#' rcsplot(data = cancer,
+#'         outcome = "status",
+#'         time = "time",
+#'         exposure = "age",
+#'         covariates = c("sex", "race", "size", "metastasis"),
+#'         group = "sex")
+#'
+#' # Set 5 knots from 'kont' function
+#' rcsplot(data = cancer,
+#'         outcome = "status",
+#'         time = "time",
+#'         exposure = "age",
+#'         covariates = c("sex", "race", "size", "metastasis"),
+#'         knots = knot(5))
+#'
+#' # Set the second knot as the referrence value
+#' rcsplot(data = cancer,
+#'         outcome = "status",
+#'         time = "time",
+#'         exposure = "age",
+#'         covariates = c("sex", "race", "size", "metastasis"),
+#'         knots = knot(5),
+#'         ref.value = "k2")
 rcsplot <- function(data,
                     outcome = NULL,
                     time = NULL,

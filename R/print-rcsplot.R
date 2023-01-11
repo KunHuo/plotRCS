@@ -4,6 +4,7 @@
 #' @param ... more arguments.
 #'
 #' @keywords internal
+#' @return No return value, called for drawing.
 #' @export
 print.rcsplot <- function(x, ...){
   if(attr(x, "explain")){

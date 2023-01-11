@@ -11,6 +11,9 @@
 
 \item{...}{more arguments.}
 }
+\value{
+No return value, called for drawing.
+}
 \description{
 Print  rcsplot
 }

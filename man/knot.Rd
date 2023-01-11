@@ -24,10 +24,15 @@ able to fit each polynomial. If the sample size is large and if there is reason
 to believe that the relationship being studied changes quickly, more than five
 knots can be used.
 }
-\references{
-Harrell, Frank E. Regression modeling strategies: with applications to linear
-models, logistic regression, and survival analysis. Vol. 608. New York:
-springer, 2001.
+\examples{
+# Location of 3 knots
+knot(3)
 
-Croxford, R. (2016). Restricted Cubic Spline Regression : A Brief Introduction.
+# Location of 7 knots
+knot(7)
+}
+\references{
+Harrell FE (2015). Regression models for continuous y and case study in ordinal
+regression. In: Harrell FE, ed. Regression Modeling Strategies. New York:
+Springer.
 }

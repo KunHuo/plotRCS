@@ -17,10 +17,17 @@
 #' @return a numeric vector.
 #'
 #' @references
-#' Harrell, Frank E. Regression modeling strategies: with applications to linear
-#' models, logistic regression, and survival analysis. Vol. 608. New York:
-#' springer, 2001.
+#' Harrell FE (2015). Regression models for continuous y and case study in ordinal
+#' regression. In: Harrell FE, ed. Regression Modeling Strategies. New York:
+#' Springer.
 #' @export
+#'
+#' @examples
+#' # Location of 3 knots
+#' knot(3)
+#'
+#' # Location of 7 knots
+#' knot(7)
 knot <- function(k = 3){
   if(k < 3 | k > 7){
     stop("The number of knots must be strictly between 3 and 7.", call. = FALSE)

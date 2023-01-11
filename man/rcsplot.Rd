@@ -115,61 +115,59 @@ default TRUE.}
 \item{...}{further arguments.}
 }
 \value{
-a ggplot2 object.
+A ggplot2 object with class 'rcsplot' containing the attributes of 'title' and 'note'.
 }
 \description{
 Drawing of restricted cubic spline (RCS) curves form a logistic
 regression model or a  Cox proportional hazards regression model.
 }
 \examples{
-\dontrun{
-# aps dataset from aplore3 package
-install.packages(aplore3)
-library(aplore3)
+# View data
+head(cancer)
 
-# RCS curves for logistic
-rcsplot(data = aps,
-        outcome = "elope",
+# RCS curves for a logistic regression model
+rcsplot(data = cancer,
+        outcome = "status",
         exposure = "age",
-        covariates = c("race", "gender"))
+        covariates = c("sex", "race", "size", "metastasis"))
 
-# Set 5 knots.
-rcsplot(data = aps,
-        outcome = "elope",
-        exposure = "age",
-        covariates = c("race", "gender"),
-        knots = kont(5))
-
-# Set minimum value of exposure as reference value.
-rcsplot(data = aps,
-        outcome = "elope",
-        exposure = "age",
-        covariates = c("race", "gender"),
-        knots = kont(5),
-        ref.value = "min")
-
-# Plot by group
-rcsplot(data = aps,
-        outcome = "elope",
-        exposure = "age",
-        covariates = c("race", "gender"),
-        group = "gender")
-
-# lung dataset from survival package
-library(survival)
-
-# RCS curves for Cox
-rcsplot(data = lung,
+# RCS curves for a Cox regression model
+rcsplot(data = cancer,
         outcome = "status",
         time = "time",
         exposure = "age",
-        covariates = c("sex", "ph.ecog"))
-}
-}
-\references{
-Harrell, Frank E. Regression modeling strategies: with applications to linear
-models, logistic regression, and survival analysis. Vol. 608. New York:
-springer, 2001.
+        covariates = c("sex", "race", "size", "metastasis"))
+
+# Unadjusted covariates
+rcsplot(data = cancer,
+        outcome = "status",
+        time = "time",
+        exposure = "age")
+
+# By group
+rcsplot(data = cancer,
+        outcome = "status",
+        time = "time",
+        exposure = "age",
+        covariates = c("sex", "race", "size", "metastasis"),
+        group = "sex")
+
+# Set 5 knots from 'kont' function
+rcsplot(data = cancer,
+        outcome = "status",
+        time = "time",
+        exposure = "age",
+        covariates = c("sex", "race", "size", "metastasis"),
+        knots = knot(5))
+
+# Set the second knot as the referrence value
+rcsplot(data = cancer,
+        outcome = "status",
+        time = "time",
+        exposure = "age",
+        covariates = c("sex", "race", "size", "metastasis"),
+        knots = knot(5),
+        ref.value = "k2")
 }
 \seealso{
 \link{rcs}, \link{knot}
