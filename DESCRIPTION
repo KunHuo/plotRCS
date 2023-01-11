@@ -1,11 +1,11 @@
 Package: plotRCS
 Type: Package
 Title: Plot Restricted Cubic Splines Curves
-Version: 0.1.2
-Authors@R: person("Rongrui", "HUO", email = "huorongrui@sr.gxmu.edu.cn",
+Version: 0.1.3
+Authors@R: person("Rongrui", "Huo", email = "huorongrui@sr.gxmu.edu.cn",
                   role = c("aut", "cre"))
 Maintainer: Rongrui Huo <huorongrui@sr.gxmu.edu.cn>
-Description: Simple drawing of restricted cubic spline (RCS) curves through 'ggplot2' package from a logistic regression model or a Cox proportional hazards regression model. This method was described by Harrell FE (2015)  <doi:10.1007/978-3-319-19425-7>.
+Description: Simple drawing of restricted cubic spline (RCS) curves through 'ggplot2' package from a logistic regression model or a Cox proportional hazards regression model. This method was described by Harrell FE (2015) <doi:10.1007/978-3-319-19425-7>.
 License: GPL (>= 3)
 Depends: R (>= 3.6.0)
 Encoding: UTF-8
