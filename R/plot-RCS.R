@@ -285,7 +285,7 @@ rcsplot <- function(data,
     plot <- ggplot2::ggplot(plotdata) +
       ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "yhat"),
                          color = linecolor,
-                         size = linesize)
+                         linewidth = linesize)
     if(conf.int){
       if(conf.type == "shape"){
         plot <- plot +
@@ -296,11 +296,11 @@ rcsplot <- function(data,
         plot <- plot +
           ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "lower"),
                              color = linecolor,
-                             size = linesize,
+                             linewidth = linesize,
                              linetype = 2) +
           ggplot2::geom_line(ggplot2::aes_string(x = exposure, y = "upper"),
                              color = linecolor,
-                             size = linesize,
+                             linewidth = linesize,
                              linetype = 2)
       }
     }
