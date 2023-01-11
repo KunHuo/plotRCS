@@ -13,7 +13,7 @@ knot(k = 3)
 a numeric vector.
 }
 \description{
-Location of knots from Harrell (2001), Regression Modeling Strategies.
+Location of knots from Harrell (2015), Regression Modeling Strategies.
 }
 \details{
 Harrell (2001) states that for many datasets, k = 4 offers an adequate fit of

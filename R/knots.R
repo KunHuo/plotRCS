@@ -1,7 +1,7 @@
 #' Location of knots for RCS
 #'
 #' @description
-#' Location of knots from Harrell (2001), Regression Modeling Strategies.
+#' Location of knots from Harrell (2015), Regression Modeling Strategies.
 #'
 #' @param k number of knots, must be strictly between 3 and 7.
 #'
