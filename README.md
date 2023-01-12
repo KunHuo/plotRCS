@@ -1,17 +1,20 @@
-Introduction to plotRCS
-================
+
+# Description
+
+Simple drawing of restricted cubic spline (RCS) curves through
+‘**ggplot2**’ package from a logistic regression model or a Cox
+proportional hazards regression model.
 
 # Installation
 
-This version of plotRCS package for R is developmetal, and may not be
-available from the CRAN. You can install it using one of the following
-way.
+The stable release version can be installed directly from CRAN using:
 
-**Direct installation from github**
+``` r
+install.packages("plotRCS")
+```
 
-You first need to install the devtools package to do the following. You
-can choose from the latest stable version and the latest development
-version.
+Alternatively, the development version can be installed using the
+**devtools** R-Package:
 
 ``` r
 # Install devtools (if you do not have it already)
@@ -20,13 +23,22 @@ install.packages("devtools")
 devtools::install_github("kunhuo/plotRCS")
 ```
 
-**Direct installation from CRAN**
+or the **remotes** R-Package:
 
 ``` r
-install.packages("plotRCS")
+install.packages("remotes")
+
+remotes::install_github("kunhuo/plotRCS")
 ```
 
-# RCS curves for a logistic regression model
+# Bug Reports and Feature Requests
+
+If you encounter any bugs or have any specific feature requests, please
+file an [Issue](https://github.com/KunHuo/plotRCS/issues).
+
+# Examples
+
+## RCS curves for a logistic regression model
 
 ``` r
 library(plotRCS)
@@ -55,9 +67,9 @@ rcsplot(data = cancer,
     ## Figure: Association Between age and status Using a Restricted Cubic Spline Regression Model.
     ## Graphs show ORs for status according to age adjusted for sex, race, size, metastasis. Data were fitted by a logistic regression model, and the model was conducted with 4 knots at the 5th, 35th, 65th, 95th percentiles of age (reference is the 5th percentile). Solid lines indicate ORs, and shadow shape indicate 95% CIs. OR, odds ratio; CI, confidence interval.
 
-![](README-files/README_unnamed-chunk-4-1.png)<!-- -->
+![](README-files/README_unnamed-chunk-5-1.png)<!-- -->
 
-# RCS curves for a Cox regression model
+## RCS curves for a Cox regression model
 
 ``` r
 rcsplot(data = cancer,
@@ -71,4 +83,4 @@ rcsplot(data = cancer,
     ## Figure: Association Between age and status Using a Restricted Cubic Spline Regression Model.
     ## Graphs show HRs for status according to age adjusted for sex, race, size, metastasis. Data were fitted by a restricted cubic spline Cox proportional hazards regression model, and the model was conducted with 4 knots at the 5th, 35th, 65th, 95th percentiles of age (reference is the 5th percentile). Solid lines indicate HRs, and shadow shape indicate 95% CIs. HR, hazard ratio; CI, confidence interval.
 
-![](README-files/README_unnamed-chunk-5-1.png)<!-- -->
+![](README-files/README_unnamed-chunk-6-1.png)<!-- -->
