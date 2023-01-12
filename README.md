@@ -56,3 +56,19 @@ rcsplot(data = cancer,
     ## Graphs show ORs for status according to age adjusted for sex, race, size, metastasis. Data were fitted by a logistic regression model, and the model was conducted with 4 knots at the 5th, 35th, 65th, 95th percentiles of age (reference is the 5th percentile). Solid lines indicate ORs, and shadow shape indicate 95% CIs. OR, odds ratio; CI, confidence interval.
 
 ![](README-files/README_unnamed-chunk-4-1.png)<!-- -->
+
+# RCS curves for a Cox regression model
+
+``` r
+rcsplot(data = cancer,
+        outcome = "status",
+        time = "time",
+        exposure = "age",
+        covariates = c("sex", "race", "size", "metastasis"))
+```
+
+    ## 
+    ## Figure: Association Between age and status Using a Restricted Cubic Spline Regression Model.
+    ## Graphs show HRs for status according to age adjusted for sex, race, size, metastasis. Data were fitted by a restricted cubic spline Cox proportional hazards regression model, and the model was conducted with 4 knots at the 5th, 35th, 65th, 95th percentiles of age (reference is the 5th percentile). Solid lines indicate HRs, and shadow shape indicate 95% CIs. HR, hazard ratio; CI, confidence interval.
+
+![](README-files/README_unnamed-chunk-5-1.png)<!-- -->

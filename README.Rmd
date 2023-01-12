@@ -53,3 +53,14 @@ rcsplot(data = cancer,
         covariates = c("sex", "race", "size", "metastasis"))
 ```
 
+
+# RCS curves for a Cox regression model
+
+```{r}
+rcsplot(data = cancer,
+        outcome = "status",
+        time = "time",
+        exposure = "age",
+        covariates = c("sex", "race", "size", "metastasis"))
+```
+
