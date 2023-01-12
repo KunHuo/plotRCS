@@ -9,7 +9,7 @@ showWarning <- TRUE
 knitr::set_alias(w = "fig.width", h = "fig.height", res = "results")
 knitr::opts_chunk$set(comment = "##", error= TRUE, warning = showWarning, message = showMessage,
                tidy = FALSE, cache = FALSE, echo = TRUE,
-               fig.width = 7, fig.height = 7,
+               fig.width = 5, fig.height = 4.5,
                fig.path = "README-files/README_")
 
 ## R configuration
@@ -35,5 +35,21 @@ devtools::install_github("kunhuo/plotRCS")
 
 ```{r, eval=FALSE}
 install.packages("plotRCS")
+```
+
+# RCS curves for a logistic regression model
+
+
+```{r}
+library(plotRCS)
+
+# View data
+head(cancer)
+
+# RCS curves for a logistic regression model
+rcsplot(data = cancer,
+        outcome = "status",
+        exposure = "age",
+        covariates = c("sex", "race", "size", "metastasis"))
 ```
 
