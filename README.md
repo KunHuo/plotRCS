@@ -1,4 +1,6 @@
-Rongrui Huo
+plotRCS
+================
+Author by Rongrui Huo
 
 # Description
 

@@ -1,6 +1,7 @@
 ---
+title: plotRCS
+author: Author by Rongrui Huo
 output: github_document
-author: Rongrui Huo
 ---
 
 ```{r, message = FALSE, tidy = FALSE, echo = F}
