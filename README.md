@@ -16,7 +16,7 @@ version.
 ``` r
 # Install devtools (if you do not have it already)
 install.packages("devtools")
-# Install directly from github (develop branch)
+
 devtools::install_github("kunhuo/plotRCS")
 ```
 

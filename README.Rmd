@@ -27,7 +27,7 @@ You first need to install the devtools package to do the following. You can choo
 ```{r, eval=FALSE}
 # Install devtools (if you do not have it already)
 install.packages("devtools")
-# Install directly from github (develop branch)
+
 devtools::install_github("kunhuo/plotRCS")
 ```
 
