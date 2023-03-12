@@ -1,8 +1,8 @@
 #' Plot restricted cubic splines curves
 #'
 #' @description
-#' Drawing of restricted cubic spline (RCS) curves form a logistic
-#' regression model or a  Cox proportional hazards regression model.
+#' Drawing of restricted cubic spline (RCS) curves form a linear regression model,
+#' a logistic regression model or a Cox proportional hazards regression model.
 #'
 #' @param data a data frame contain the columns of outcome, time, exposure,
 #' covariates, and group.
@@ -59,6 +59,12 @@
 #' @examples
 #' # View data
 #' head(cancer)
+#'
+#' # RCS curves for a linear regression model
+#' rcsplot(data = cancer,
+#'         outcome = "size",
+#'         exposure = "age",
+#'         covariates = c("sex", "race", "metastasis"))
 #'
 #' # RCS curves for a logistic regression model
 #' rcsplot(data = cancer,
@@ -150,25 +156,28 @@ rcsplot <- function(data,
     covariates <- setdiff(covariates, time)
   }
 
-  if(length(unique(data[[outcome]])) != 2L){
-    stop("The number of levels for the outcome must be 2.", call. = FALSE)
-  }
-
   if(!is.numeric(data[[exposure]])){
     stop("The exposure variable must be numeric.", call. = FALSE)
   }
 
-  # Set positive event
-  if(is.null(positive)){
-    if(is.numeric(data[[outcome]])){
-      positive <- max(data[[outcome]])
-    }else if(is.factor(data[[outcome]])){
-      positive <- levels(data[[outcome]])[2]
-    }else{
-      stop("You need to specify the positive event of outcome.", call. = FALSE)
+
+  if(length(unique(data[[outcome]])) == 2L){
+    # Set positive event
+    if(is.null(positive)){
+      if(is.numeric(data[[outcome]])){
+        positive <- max(data[[outcome]])
+      }else if(is.factor(data[[outcome]])){
+        positive <- levels(data[[outcome]])[2]
+      }else{
+        stop("You need to specify the positive event of outcome.", call. = FALSE)
+      }
+    }
+    data[[outcome]] <- ifelse(data[[outcome]] == positive, 1, 0)
+  }else{
+    if(!is.numeric(data[[outcome]])){
+      stop("The outcome variable must be numeric or the level must be 2.", call. = FALSE)
     }
   }
-  data[[outcome]] <- ifelse(data[[outcome]] == positive, 1, 0)
 
   # Set data to environments
   pos <- 1
@@ -200,21 +209,31 @@ rcsplot <- function(data,
   eval(parse(text = "ddist_$limits['Adjust to', exposure] <<- ref.value1"))
 
   # Fit models
-  if(is.null(time)){
+  if(length(unique(data[[outcome]])) == 2L){
+    if(is.null(time)){
+      formula <- sprintf("%s ~ rms::rcs(%s, m_)", outcome, exposure)
+      if(length(covariates) != 0){
+        formula <- paste(formula, paste(covariates, collapse = " + "), sep = " + ")
+      }
+      formula <- stats::as.formula(formula)
+      model   <- rms::lrm(formula = formula, data = data)
+    }else{
+      formula <- sprintf("survival::Surv(%s, %s) ~ rms::rcs(%s, m_)", time, outcome, exposure)
+      if(length(covariates) != 0){
+        formula <- paste(formula, paste(covariates, collapse = " + "), sep = " + ")
+      }
+      formula <- stats::as.formula(formula)
+      model   <- rms::cph(formula = formula, data = data)
+    }
+  }else{
     formula <- sprintf("%s ~ rms::rcs(%s, m_)", outcome, exposure)
     if(length(covariates) != 0){
       formula <- paste(formula, paste(covariates, collapse = " + "), sep = " + ")
     }
     formula <- stats::as.formula(formula)
-    model   <- rms::lrm(formula = formula, data = data)
-  }else{
-    formula <- sprintf("survival::Surv(%s, %s) ~ rms::rcs(%s, m_)", time, outcome, exposure)
-    if(length(covariates) != 0){
-      formula <- paste(formula, paste(covariates, collapse = " + "), sep = " + ")
-    }
-    formula <- stats::as.formula(formula)
-    model   <- rms::cph(formula = formula, data = data)
+    model   <- rms::ols(formula = formula, data = data)
   }
+
 
   # Check conf.level.
   if(conf.level < 0 | conf.level > 1){
@@ -222,14 +241,20 @@ rcsplot <- function(data,
   }
 
   # Get plotdata from models
-  if(is.null(group)){
-    eval.text <- sprintf("rms::Predict(model, %s, conf.int = %f, ref.zero = TRUE, fun = exp)",
-                         exposure,
-                         conf.level)
+  if(length(unique(data[[outcome]])) == 2L){
+    if(is.null(group)){
+      eval.text <- sprintf("rms::Predict(model, %s, conf.int = %f, ref.zero = TRUE, fun = exp)",
+                           exposure,
+                           conf.level)
+    }else{
+      eval.text <- sprintf("rms::Predict(model, %s, %s, conf.int = %f, ref.zero = TRUE, fun = exp)",
+                           exposure,
+                           group,
+                           conf.level)
+    }
   }else{
-    eval.text <- sprintf("rms::Predict(model, %s, %s, conf.int = %f, ref.zero = TRUE, fun = exp)",
+    eval.text <- sprintf("rms::Predict(model, %s, conf.int = %f, ref.zero = TRUE)",
                          exposure,
-                         group,
                          conf.level)
   }
   plotdata <- eval(parse(text = eval.text))
@@ -248,10 +273,19 @@ rcsplot <- function(data,
     xbreaks <- pretty(plotdata[[exposure]])
   }
   if(is.null(ybreaks)){
-    if(conf.int){
-      ybreaks <- pretty(c(0, plotdata$upper))
+
+    if(length(unique(data[[outcome]])) == 2L){
+      if(conf.int){
+        ybreaks <- pretty(c(0, plotdata$upper))
+      }else{
+        ybreaks <- pretty(c(0, plotdata$yhat))
+      }
     }else{
-      ybreaks <- pretty(c(0, plotdata$yhat))
+      if(conf.int){
+        ybreaks <- pretty(c(plotdata$lower, plotdata$upper))
+      }else{
+        ybreaks <- pretty(plotdata$yhat)
+      }
     }
   }
 
@@ -263,17 +297,25 @@ rcsplot <- function(data,
     }
   }
   if(ylab == ""){
-    if (is.null(time)) {
-      ylab <- "Odds ratio"
-      if(conf.int){
-        ylab <- sprintf("%s (%s%% CI)", ylab, as.character(conf.level * 100))
+    if(length(unique(data[[outcome]])) == 2L){
+      if (is.null(time)) {
+        ylab <- "Odds ratio"
+        if(conf.int){
+          ylab <- sprintf("%s (%s%% CI)", ylab, as.character(conf.level * 100))
+        }
+      } else{
+        ylab <- "Hazard ratio"
+        if(conf.int){
+          ylab <- sprintf("%s (%s%% CI)", ylab, as.character(conf.level * 100))
+        }
       }
-    } else{
-      ylab <- "Hazard ratio"
+    }else{
+      ylab <- "\u3b2"
       if(conf.int){
         ylab <- sprintf("%s (%s%% CI)", ylab, as.character(conf.level * 100))
       }
     }
+
   }
 
   conf.type <- match.arg(conf.type)
@@ -324,8 +366,13 @@ rcsplot <- function(data,
   }
 
   if(ref.line){
-    plot <- plot +
-      ggplot2::geom_hline(yintercept = 1, linetype = 2, linewidth = linesize)
+    if(length(unique(data[[outcome]])) == 2L){
+      plot <- plot +
+        ggplot2::geom_hline(yintercept = 1, linetype = 2, linewidth = linesize)
+    }else{
+      plot <- plot +
+        ggplot2::geom_hline(yintercept = 0, linetype = 2, linewidth = linesize)
+    }
   }
 
   plot <- plot +
@@ -347,8 +394,15 @@ rcsplot <- function(data,
   if (pvalue) {
     pdata  <- stats::anova(model)
     pdata  <- as.data.frame(pdata)
-    p.value <- pdata[2, 3]
-    p.overall <- pdata[1, 3]
+
+
+    if(length(unique(data[[outcome]])) == 2L){
+      p.value <- pdata[2, 3]
+      p.overall <- pdata[1, 3]
+    }else{
+      p.value <- pdata[2, 5]
+      p.overall <- pdata[1, 5]
+    }
 
     p.value <- format_pvalue(p.value, digits = pvalue.digits)
     if (!regex_detect(p.value, "<", fixed = TRUE)) {
@@ -385,12 +439,12 @@ rcsplot <- function(data,
     py <-  min(ybreaks) + (max(ybreaks) - min(ybreaks)) * pvalue.position[2]
 
     plot <- plot + draw_label(p.string,
-                      size = fontsize,
-                      fontfamily = fontfamily,
-                      x = px,
-                      y = py,
-                      hjust = 0,
-                      vjust = 1)
+                              size = fontsize,
+                              fontfamily = fontfamily,
+                              x = px,
+                              y = py,
+                              hjust = 0,
+                              vjust = 1)
   }
 
   # Explain the figures, title and note.
@@ -398,8 +452,15 @@ rcsplot <- function(data,
     title <- sprintf("Figure: Association Between %s and %s Using a Restricted Cubic Spline Regression Model.",
                      exposure,
                      outcome)
+
+    if(length(unique(data[[outcome]])) == 2L){
+      abbr <- ifelse(is.null(time), "ORs", "HRs")
+    }else{
+      abbr <- "\u3b2"
+    }
+
     note  <- sprintf("Graphs show %s for %s according to %s",
-                     ifelse(is.null(time), "ORs", "HRs"),
+                     abbr,
                      outcome,
                      exposure)
 
@@ -409,10 +470,14 @@ rcsplot <- function(data,
       note <- sprintf("%s adjusted for %s.", note, paste(covariates, collapse = ", "))
     }
 
-    if(is.null(time)){
-      note <- paste(note, "Data were fitted by a logistic regression model,", sep = " ")
+    if(length(unique(data[[outcome]])) == 2L){
+      if(is.null(time)){
+        note <- paste(note, "Data were fitted by a logistic regression model,", sep = " ")
+      }else{
+        note <- paste(note, "Data were fitted by a restricted cubic spline Cox proportional hazards regression model,", sep = " ")
+      }
     }else{
-      note <- paste(note, "Data were fitted by a restricted cubic spline Cox proportional hazards regression model,", sep = " ")
+      note <- paste(note, "Data were fitted by a linear regression model,", sep = " ")
     }
 
     if(is.character(ref.value)){
@@ -445,14 +510,19 @@ rcsplot <- function(data,
     #                             max(data[[exposure]], na.rm = TRUE)), sep = " ")
 
     note <- paste(note, sprintf("Solid lines indicate %s, and %s indicate %s%% CIs.",
-                                ifelse(is.null(time), "ORs", "HRs"),
+                                abbr,
                                 ifelse(conf.type == "shape", "shadow shape", "dashed lines"),
                                 as.character(conf.level * 100)), sep = " ")
-    note <- paste(note,
-                  ifelse(is.null(time),
-                         "OR, odds ratio; CI, confidence interval.",
-                         "HR, hazard ratio; CI, confidence interval." ),
-                  sep = " ")
+
+    if(length(unique(data[[outcome]])) == 2L){
+      note <- paste(note,
+                    ifelse(is.null(time),
+                           "OR, odds ratio; CI, confidence interval.",
+                           "HR, hazard ratio; CI, confidence interval." ),
+                    sep = " ")
+    }else{
+      note <- paste(note, "CI, confidence interval.", sep = " ")
+    }
 
     attr(plot, "title") <- title
     attr(plot, "note")  <- note
