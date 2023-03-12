@@ -21,6 +21,11 @@ options(width = 116, scipen = 5)
 
 Simple drawing of restricted cubic spline (RCS) curves through '**ggplot2**' package from a linear regression model, a logistic regression model or a Cox proportional hazards regression model.
 
+# Package NEWS
+
+* Changes in version 0.1.4
+* Support for a linear regression model
+
 # Installation
 
 The stable release version can be installed directly from CRAN using:
