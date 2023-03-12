@@ -118,12 +118,18 @@ default TRUE.}
 A ggplot2 object with class 'rcsplot' containing the attributes of 'title' and 'note'.
 }
 \description{
-Drawing of restricted cubic spline (RCS) curves form a logistic
-regression model or a  Cox proportional hazards regression model.
+Drawing of restricted cubic spline (RCS) curves form a linear regression model,
+a logistic regression model or a Cox proportional hazards regression model.
 }
 \examples{
 # View data
 head(cancer)
+
+# RCS curves for a linear regression model
+rcsplot(data = cancer,
+        outcome = "size",
+        exposure = "age",
+        covariates = c("sex", "race", "metastasis"))
 
 # RCS curves for a logistic regression model
 rcsplot(data = cancer,
