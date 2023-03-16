@@ -379,7 +379,7 @@ rcsplot <- function(data,
     gg_theme_sci(font.size = fontsize, font.family = fontfamily) +
     ggplot2::xlab(xlab) +
     ggplot2::ylab(ylab) +
-    ggplot2::coord_cartesian(expand = FALSE) +
+    ggplot2::coord_cartesian(expand = FALSE, clip = "off") +
     ggplot2::scale_x_continuous(breaks = xbreaks, limits = c(min(xbreaks), max(xbreaks))) +
     ggplot2::scale_y_continuous(breaks = ybreaks, limits = c(min(ybreaks), max(ybreaks)))
 
