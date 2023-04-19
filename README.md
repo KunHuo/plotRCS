@@ -10,8 +10,8 @@ regression model or a Cox proportional hazards regression model.
 
 # Package NEWS
 
-- Changes in version 0.1.4
-- Support for a linear regression model
+- Changes in version 0.1.5
+- Support for log OR or HR, when set log = TRUE.
 
 # Installation
 
