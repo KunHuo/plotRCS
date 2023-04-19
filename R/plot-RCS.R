@@ -49,6 +49,7 @@
 #' @param ylab label of y-axis.
 #' @param explain logical indicating whether or not to explain the figure,
 #' default TRUE.
+#' @param log log OR or HR.
 #' @param ... further arguments.
 #'
 #' @seealso [rcs], [knot]
@@ -138,6 +139,7 @@ rcsplot <- function(data,
                     xlab = "",
                     ylab = "",
                     explain = TRUE,
+                    log = FALSE,
                     ...) {
 
   # Select variables and check
@@ -243,14 +245,27 @@ rcsplot <- function(data,
   # Get plotdata from models
   if(length(unique(data[[outcome]])) == 2L){
     if(is.null(group)){
-      eval.text <- sprintf("rms::Predict(model, %s, conf.int = %f, ref.zero = TRUE, fun = exp)",
-                           exposure,
-                           conf.level)
+      if(log){
+        eval.text <- sprintf("rms::Predict(model, %s, conf.int = %f, ref.zero = TRUE)",
+                             exposure,
+                             conf.level)
+      }else{
+        eval.text <- sprintf("rms::Predict(model, %s, conf.int = %f, ref.zero = TRUE, fun = exp)",
+                             exposure,
+                             conf.level)
+      }
     }else{
-      eval.text <- sprintf("rms::Predict(model, %s, %s, conf.int = %f, ref.zero = TRUE, fun = exp)",
-                           exposure,
-                           group,
-                           conf.level)
+     if(log){
+       eval.text <- sprintf("rms::Predict(model, %s, %s, conf.int = %f, ref.zero = TRUE)",
+                            exposure,
+                            group,
+                            conf.level)
+     }else{
+       eval.text <- sprintf("rms::Predict(model, %s, %s, conf.int = %f, ref.zero = TRUE, fun = exp)",
+                            exposure,
+                            group,
+                            conf.level)
+     }
     }
   }else{
     eval.text <- sprintf("rms::Predict(model, %s, conf.int = %f, ref.zero = TRUE)",
@@ -275,11 +290,23 @@ rcsplot <- function(data,
   if(is.null(ybreaks)){
 
     if(length(unique(data[[outcome]])) == 2L){
-      if(conf.int){
-        ybreaks <- pretty(c(0, plotdata$upper))
+
+      if(log){
+        if(conf.int){
+          ybreaks <- pretty(c(plotdata$lower, plotdata$upper))
+        }else{
+          ybreaks <- pretty(plotdata$yhat)
+        }
+
       }else{
-        ybreaks <- pretty(c(0, plotdata$yhat))
+        if(conf.int){
+          ybreaks <- pretty(c(0, plotdata$upper))
+        }else{
+          ybreaks <- pretty(c(0, plotdata$yhat))
+        }
       }
+
+
     }else{
       if(conf.int){
         ybreaks <- pretty(c(plotdata$lower, plotdata$upper))
@@ -299,12 +326,13 @@ rcsplot <- function(data,
   if(ylab == ""){
     if(length(unique(data[[outcome]])) == 2L){
       if (is.null(time)) {
-        ylab <- "Odds ratio"
+        ylab <- ifelse(log, "Log odds ratio", "Odds ratio")
+
         if(conf.int){
           ylab <- sprintf("%s (%s%% CI)", ylab, as.character(conf.level * 100))
         }
       } else{
-        ylab <- "Hazard ratio"
+        ylab <- ifelse(log, "Log hazard ratio", "Hazard ratio")
         if(conf.int){
           ylab <- sprintf("%s (%s%% CI)", ylab, as.character(conf.level * 100))
         }
@@ -367,8 +395,13 @@ rcsplot <- function(data,
 
   if(ref.line){
     if(length(unique(data[[outcome]])) == 2L){
-      plot <- plot +
-        ggplot2::geom_hline(yintercept = 1, linetype = 2, linewidth = linesize)
+      if(log){
+        plot <- plot +
+          ggplot2::geom_hline(yintercept = 0, linetype = 2, linewidth = linesize)
+      }else{
+        plot <- plot +
+          ggplot2::geom_hline(yintercept = 1, linetype = 2, linewidth = linesize)
+      }
     }else{
       plot <- plot +
         ggplot2::geom_hline(yintercept = 0, linetype = 2, linewidth = linesize)
@@ -454,7 +487,11 @@ rcsplot <- function(data,
                      outcome)
 
     if(length(unique(data[[outcome]])) == 2L){
-      abbr <- ifelse(is.null(time), "ORs", "HRs")
+      if(log){
+        abbr <- ifelse(is.null(time), "log ORs", "log HRs")
+      }else{
+        abbr <- ifelse(is.null(time), "ORs", "HRs")
+      }
     }else{
       abbr <- "\u3b2"
     }
