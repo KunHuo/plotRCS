@@ -34,6 +34,7 @@ rcsplot(
   xlab = "",
   ylab = "",
   explain = TRUE,
+  log = FALSE,
   ...
 )
 }
@@ -111,6 +112,8 @@ include P for overall association and P for nonlinear, default TRUE.}
 
 \item{explain}{logical indicating whether or not to explain the figure,
 default TRUE.}
+
+\item{log}{log OR or HR.}
 
 \item{...}{further arguments.}
 }
