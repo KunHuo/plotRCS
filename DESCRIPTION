@@ -1,7 +1,7 @@
 Package: plotRCS
 Type: Package
 Title: Plot Restricted Cubic Splines Curves
-Version: 0.1.4
+Version: 0.1.5
 Authors@R: person("Rongrui", "Huo", email = "huorongrui@sr.gxmu.edu.cn",
                   role = c("aut", "cre"))
 Maintainer: Rongrui Huo <huorongrui@sr.gxmu.edu.cn>
